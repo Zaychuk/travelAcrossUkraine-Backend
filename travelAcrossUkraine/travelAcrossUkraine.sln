@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33110.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "travelAcrossUkraine", "travelAcrossUkraine\travelAcrossUkraine.csproj", "{7887B7A9-2602-4239-8F85-270AB1994F54}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "travelAcrossUkraine.WebApi", "travelAcrossUkraine\travelAcrossUkraine.WebApi.csproj", "{7887B7A9-2602-4239-8F85-270AB1994F54}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

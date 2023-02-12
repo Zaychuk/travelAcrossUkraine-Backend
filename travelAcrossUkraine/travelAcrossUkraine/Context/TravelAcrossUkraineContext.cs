@@ -3,6 +3,8 @@ using travelAcrossUkraine.WebApi.Entities;
 
 namespace travelAcrossUkraine.WebApi.Context;
 
+// EntityFrameworkCore\Add-Migration NameOfMigration
+
 public class TravelAcrossUkraineContext : DbContext
 {
     public TravelAcrossUkraineContext() : base()
@@ -21,22 +23,9 @@ public class TravelAcrossUkraineContext : DbContext
         modelBuilder.Entity<GeoPointEntity>(entity => 
         {
             entity.Property(p => p.CoordinateX).HasPrecision(20, 10);
-            entity.Property(p => p.CoordinateY)
-                        .HasPrecision(20, 10);
+            entity.Property(p => p.CoordinateY).HasPrecision(20, 10);
         });
-
-        //modelBuilder.Entity<Course>(entity =>
-        //{
-        //    entity.Property(e => e.CourseName)
-        //        .HasMaxLength(50)
-        //        .IsUnicode(false);
-
-        //    entity.HasOne(d => d.Teacher)
-        //        .WithMany(p => p.Course)
-        //        .HasForeignKey(d => d.TeacherId)
-        //        .OnDelete(DeleteBehavior.Cascade)
-        //        .HasConstraintName("FK_Course_Teacher");
-        //});
     }
     public DbSet<GeoPointEntity> GeoPoints { get; set; }
+    public DbSet<PolygonEntity> Polygons { get; set; }
 }

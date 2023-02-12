@@ -24,9 +24,11 @@ services.AddSingleton(mapper);
 
 // Sevices
 services.AddSingleton<IGeoPointService, GeoPointService>();
+services.AddSingleton<IPolygonService, PolygonService>();
 
 // Repositories
 services.AddSingleton<IGeoPointRepository, GeoPointRepository>();
+services.AddSingleton<IPolygonRepository, PolygonRepository>();
 
 
 

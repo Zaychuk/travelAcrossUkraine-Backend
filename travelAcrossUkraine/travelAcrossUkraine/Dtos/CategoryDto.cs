@@ -1,8 +1,10 @@
 ﻿namespace TravelAcrossUkraine.WebApi.Dtos;
 
-public class TypeDto
+public class CategoryDto
 {
     public Guid Id { get; set; }
     public string Name { get; set; }
-    public List<CategoryWithoutTypeDto> Categories { get; set; }
+    public TypeWithoutCategoryDto Type { get; set; }
 }
+
+

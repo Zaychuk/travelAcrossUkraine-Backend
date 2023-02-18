@@ -28,7 +28,7 @@ public class TypesController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<Guid>> CreateAsync(TypeDto type)
+    public async Task<ActionResult<Guid>> CreateAsync(CreateTypeDto type)
     {
         return await _typeService.CreateAsync(type);
     }

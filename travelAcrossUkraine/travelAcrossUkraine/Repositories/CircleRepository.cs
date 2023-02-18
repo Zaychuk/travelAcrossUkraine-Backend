@@ -16,10 +16,10 @@ public class CircleRepository : ICircleRepository
     public async Task CreateAsync(CircleEntity circle)
     {
         var context = new TravelAcrossUkraineContext();
-        circle.CreatedDate = DateTime.Now;
-        circle.UpdatedDate = DateTime.Now;
-        circle.CenterGeoPoint.CreatedDate = DateTime.Now;
-        circle.CenterGeoPoint.UpdatedDate = DateTime.Now;
+        circle.CreatedDate = DateTime.UtcNow;
+        circle.UpdatedDate = DateTime.UtcNow;
+        circle.CenterGeoPoint.CreatedDate = DateTime.UtcNow;
+        circle.CenterGeoPoint.UpdatedDate = DateTime.UtcNow;
 
         context.Circles.Add(circle);
 

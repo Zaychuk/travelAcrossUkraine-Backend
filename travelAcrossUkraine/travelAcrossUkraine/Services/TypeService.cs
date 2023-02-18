@@ -9,7 +9,7 @@ public interface ITypeService
 {
     Task<List<TypeDto>> GetAllAsync();
     Task<TypeDto> GetByIdAsync(Guid id);
-    Task<Guid> CreateAsync(TypeDto typeDto);
+    Task<Guid> CreateAsync(CreateTypeDto typeDto);
 }
 
 public class TypeService : ITypeService
@@ -22,7 +22,7 @@ public class TypeService : ITypeService
         _typeRepository = typeRepository;
         _mapper = mapper;
     }
-    public async Task<Guid> CreateAsync(TypeDto typeDto)
+    public async Task<Guid> CreateAsync(CreateTypeDto typeDto)
     {
         var type = _mapper.Map<TypeEntity>(typeDto);
         type.Id = Guid.NewGuid();

@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
-using travelAcrossUkraine.WebApi.Context;
-using travelAcrossUkraine.WebApi.Entities;
+using TravelAcrossUkraine.WebApi.Context;
+using TravelAcrossUkraine.WebApi.Entities;
 
-namespace travelAcrossUkraine.WebApi.Repositories;
+namespace TravelAcrossUkraine.WebApi.Repositories;
 
 public interface IPolygonRepository
 {

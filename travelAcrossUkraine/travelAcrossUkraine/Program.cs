@@ -1,7 +1,7 @@
 using AutoMapper;
-using travelAcrossUkraine.WebApi.Mappings;
-using travelAcrossUkraine.WebApi.Repositories;
-using travelAcrossUkraine.WebApi.Services;
+using TravelAcrossUkraine.WebApi.Mappings;
+using TravelAcrossUkraine.WebApi.Repositories;
+using TravelAcrossUkraine.WebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

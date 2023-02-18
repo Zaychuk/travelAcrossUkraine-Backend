@@ -1,6 +1,6 @@
-﻿using travelAcrossUkraine.WebApi.Enums;
+﻿using TravelAcrossUkraine.WebApi.Enums;
 
-namespace travelAcrossUkraine.WebApi.Entities;
+namespace TravelAcrossUkraine.WebApi.Entities;
 
 public class GeoPointEntity : BaseEntity
 {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using travelAcrossUkraine.WebApi.Entities;
+using TravelAcrossUkraine.WebApi.Entities;
 
-namespace travelAcrossUkraine.WebApi.Context;
+namespace TravelAcrossUkraine.WebApi.Context;
 
 // EntityFrameworkCore\Add-Migration NameOfMigration
 
@@ -25,9 +25,16 @@ public class TravelAcrossUkraineContext : DbContext
             entity.Property(p => p.CoordinateX).HasPrecision(20, 10);
             entity.Property(p => p.CoordinateY).HasPrecision(20, 10);
         });
+
+        modelBuilder.Entity<CircleEntity>(entity => 
+        {
+            entity.Property(p => p.Radius).HasPrecision(20, 10);
+        });
     }
+
     public DbSet<GeoPointEntity> GeoPoints { get; set; }
     public DbSet<PolygonEntity> Polygons { get; set; }
+    public DbSet<CircleEntity> Circles { get; set; }
 }
 
 

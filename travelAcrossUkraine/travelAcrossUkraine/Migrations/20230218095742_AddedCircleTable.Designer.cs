@@ -12,8 +12,8 @@ using TravelAcrossUkraine.WebApi.Context;
 namespace TravelAcrossUkraine.WebApi.Migrations
 {
     [DbContext(typeof(TravelAcrossUkraineContext))]
-    [Migration("20230212094210_AddedPolygonsTable")]
-    partial class AddedPolygonsTable
+    [Migration("20230218095742_AddedCircleTable")]
+    partial class AddedCircleTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,6 +23,35 @@ namespace TravelAcrossUkraine.WebApi.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("TravelAcrossUkraine.WebApi.Entities.CircleEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CenterGeoPointId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal>("Radius")
+                        .HasPrecision(20, 10)
+                        .HasColumnType("decimal(20,10)");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CenterGeoPointId");
+
+                    b.ToTable("Circles");
+                });
 
             modelBuilder.Entity("TravelAcrossUkraine.WebApi.Entities.GeoPointEntity", b =>
                 {
@@ -81,6 +110,17 @@ namespace TravelAcrossUkraine.WebApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Polygons");
+                });
+
+            modelBuilder.Entity("TravelAcrossUkraine.WebApi.Entities.CircleEntity", b =>
+                {
+                    b.HasOne("TravelAcrossUkraine.WebApi.Entities.GeoPointEntity", "CenterGeoPoint")
+                        .WithMany()
+                        .HasForeignKey("CenterGeoPointId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CenterGeoPoint");
                 });
 
             modelBuilder.Entity("TravelAcrossUkraine.WebApi.Entities.GeoPointEntity", b =>

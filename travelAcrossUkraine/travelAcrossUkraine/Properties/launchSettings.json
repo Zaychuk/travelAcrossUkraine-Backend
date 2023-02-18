@@ -9,7 +9,7 @@
     }
   },
   "profiles": {
-    "travelAcrossUkraine": {
+    "TravelAcrossUkraine": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,

@@ -1,4 +1,4 @@
-namespace travelAcrossUkraine
+namespace TravelAcrossUkraine
 {
     public class WeatherForecast
     {

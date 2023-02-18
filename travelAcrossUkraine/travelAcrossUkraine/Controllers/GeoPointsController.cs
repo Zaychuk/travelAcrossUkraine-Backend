@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using travelAcrossUkraine.WebApi.Dtos;
-using travelAcrossUkraine.WebApi.Entities;
-using travelAcrossUkraine.WebApi.Services;
+using TravelAcrossUkraine.WebApi.Dtos;
+using TravelAcrossUkraine.WebApi.Entities;
+using TravelAcrossUkraine.WebApi.Services;
 
-namespace travelAcrossUkraine.Controllers
+namespace TravelAcrossUkraine.Controllers
 {
     [ApiController]
     [Route("[controller]")]

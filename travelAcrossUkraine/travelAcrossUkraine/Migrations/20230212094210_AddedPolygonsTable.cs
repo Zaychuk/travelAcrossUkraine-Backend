@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace travelAcrossUkraine.WebApi.Migrations
+namespace TravelAcrossUkraine.WebApi.Migrations
 {
     public partial class AddedPolygonsTable : Migration
     {

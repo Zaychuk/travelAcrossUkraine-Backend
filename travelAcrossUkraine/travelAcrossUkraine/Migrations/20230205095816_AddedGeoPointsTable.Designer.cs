@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using travelAcrossUkraine.WebApi.Context;
+using TravelAcrossUkraine.WebApi.Context;
 
 #nullable disable
 
-namespace travelAcrossUkraine.WebApi.Migrations
+namespace TravelAcrossUkraine.WebApi.Migrations
 {
     [DbContext(typeof(TravelAcrossUkraineContext))]
     [Migration("20230205095816_AddedGeoPointsTable")]
@@ -24,7 +24,7 @@ namespace travelAcrossUkraine.WebApi.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("travelAcrossUkraine.WebApi.Entities.GeoPointEntity", b =>
+            modelBuilder.Entity("TravelAcrossUkraine.WebApi.Entities.GeoPointEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()

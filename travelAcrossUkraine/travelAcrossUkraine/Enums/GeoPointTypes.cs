@@ -1,4 +1,4 @@
-﻿namespace travelAcrossUkraine.WebApi.Enums;
+﻿namespace TravelAcrossUkraine.WebApi.Enums;
 
 public enum GeoPointTypes
 {

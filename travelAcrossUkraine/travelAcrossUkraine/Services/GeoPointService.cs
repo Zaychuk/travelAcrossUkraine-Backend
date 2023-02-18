@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using travelAcrossUkraine.WebApi.Dtos;
-using travelAcrossUkraine.WebApi.Entities;
-using travelAcrossUkraine.WebApi.Repositories;
+using TravelAcrossUkraine.WebApi.Dtos;
+using TravelAcrossUkraine.WebApi.Entities;
+using TravelAcrossUkraine.WebApi.Repositories;
 
-namespace travelAcrossUkraine.WebApi.Services;
+namespace TravelAcrossUkraine.WebApi.Services;
 
 public interface IGeoPointService
 {

@@ -35,6 +35,7 @@ public class TravelAcrossUkraineContext : DbContext
     public DbSet<GeoPointEntity> GeoPoints { get; set; }
     public DbSet<PolygonEntity> Polygons { get; set; }
     public DbSet<CircleEntity> Circles { get; set; }
+    public DbSet<TypeEntity> Types { get; set; }
 }
 
 

@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using travelAcrossUkraine.WebApi.Dtos;
-using travelAcrossUkraine.WebApi.Entities;
+using TravelAcrossUkraine.WebApi.Dtos;
+using TravelAcrossUkraine.WebApi.Entities;
 
-namespace travelAcrossUkraine.WebApi.Mappings;
+namespace TravelAcrossUkraine.WebApi.Mappings;
 
 public class MappingProfile : Profile
 {
@@ -10,5 +10,6 @@ public class MappingProfile : Profile
     {
         CreateMap<GeoPointEntity, GeoPointDto>().ReverseMap();
         CreateMap<PolygonEntity, PolygonDto>().ReverseMap();
+        CreateMap<CircleEntity, CircleDto>().ReverseMap();
     }
 }

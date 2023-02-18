@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Security.Cryptography;
-using travelAcrossUkraine.WebApi.Context;
-using travelAcrossUkraine.WebApi.Entities;
+using TravelAcrossUkraine.WebApi.Context;
+using TravelAcrossUkraine.WebApi.Entities;
 
-namespace travelAcrossUkraine.WebApi.Repositories;
+namespace TravelAcrossUkraine.WebApi.Repositories;
 
 public interface IPolygonRepository
 {
@@ -21,11 +20,12 @@ public class PolygonRepository : IPolygonRepository
         polygon.UpdatedDate = DateTime.UtcNow;
 
         context.Entry(polygon).State = EntityState.Added;
-        polygon.GeoPoints.ForEach(geoPoint => {
+        polygon.GeoPoints.ForEach(geoPoint =>
+        {
             geoPoint.CreatedDate = DateTime.UtcNow;
             geoPoint.UpdatedDate = DateTime.UtcNow;
             context.Entry(geoPoint).State = EntityState.Added;
-            });
+        });
 
         await context.SaveChangesAsync();
     }

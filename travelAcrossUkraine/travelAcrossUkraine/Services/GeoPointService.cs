@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using travelAcrossUkraine.WebApi.Dtos;
-using travelAcrossUkraine.WebApi.Entities;
-using travelAcrossUkraine.WebApi.Repositories;
+using TravelAcrossUkraine.WebApi.Dtos;
+using TravelAcrossUkraine.WebApi.Entities;
+using TravelAcrossUkraine.WebApi.Repositories;
 
-namespace travelAcrossUkraine.WebApi.Services;
+namespace TravelAcrossUkraine.WebApi.Services;
 
 public interface IGeoPointService
 {
@@ -41,7 +41,7 @@ public class GeoPointService : IGeoPointService
 
     public async Task<GeoPointDto> GetByIdAsync(Guid id)
     {
-        var geoPoint = await _geoPointRepository.GetByIdAsync(id); 
+        var geoPoint = await _geoPointRepository.GetByIdAsync(id);
 
         return _mapper.Map<GeoPointDto>(geoPoint);
     }

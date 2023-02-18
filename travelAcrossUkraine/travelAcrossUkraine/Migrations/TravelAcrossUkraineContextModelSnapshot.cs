@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using travelAcrossUkraine.WebApi.Context;
+using TravelAcrossUkraine.WebApi.Context;
 
 #nullable disable
 
-namespace travelAcrossUkraine.WebApi.Migrations
+namespace TravelAcrossUkraine.WebApi.Migrations
 {
     [DbContext(typeof(TravelAcrossUkraineContext))]
     partial class TravelAcrossUkraineContextModelSnapshot : ModelSnapshot
@@ -22,7 +22,36 @@ namespace travelAcrossUkraine.WebApi.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("travelAcrossUkraine.WebApi.Entities.GeoPointEntity", b =>
+            modelBuilder.Entity("TravelAcrossUkraine.WebApi.Entities.CircleEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CenterGeoPointId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal>("Radius")
+                        .HasPrecision(20, 10)
+                        .HasColumnType("decimal(20,10)");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CenterGeoPointId");
+
+                    b.ToTable("Circles");
+                });
+
+            modelBuilder.Entity("TravelAcrossUkraine.WebApi.Entities.GeoPointEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -61,7 +90,7 @@ namespace travelAcrossUkraine.WebApi.Migrations
                     b.ToTable("GeoPoints");
                 });
 
-            modelBuilder.Entity("travelAcrossUkraine.WebApi.Entities.PolygonEntity", b =>
+            modelBuilder.Entity("TravelAcrossUkraine.WebApi.Entities.PolygonEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -81,16 +110,27 @@ namespace travelAcrossUkraine.WebApi.Migrations
                     b.ToTable("Polygons");
                 });
 
-            modelBuilder.Entity("travelAcrossUkraine.WebApi.Entities.GeoPointEntity", b =>
+            modelBuilder.Entity("TravelAcrossUkraine.WebApi.Entities.CircleEntity", b =>
                 {
-                    b.HasOne("travelAcrossUkraine.WebApi.Entities.PolygonEntity", "Polygon")
+                    b.HasOne("TravelAcrossUkraine.WebApi.Entities.GeoPointEntity", "CenterGeoPoint")
+                        .WithMany()
+                        .HasForeignKey("CenterGeoPointId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CenterGeoPoint");
+                });
+
+            modelBuilder.Entity("TravelAcrossUkraine.WebApi.Entities.GeoPointEntity", b =>
+                {
+                    b.HasOne("TravelAcrossUkraine.WebApi.Entities.PolygonEntity", "Polygon")
                         .WithMany("GeoPoints")
                         .HasForeignKey("PolygonId");
 
                     b.Navigation("Polygon");
                 });
 
-            modelBuilder.Entity("travelAcrossUkraine.WebApi.Entities.PolygonEntity", b =>
+            modelBuilder.Entity("TravelAcrossUkraine.WebApi.Entities.PolygonEntity", b =>
                 {
                     b.Navigation("GeoPoints");
                 });

@@ -1,4 +1,4 @@
-﻿namespace travelAcrossUkraine.WebApi.Dtos;
+﻿namespace TravelAcrossUkraine.WebApi.Dtos;
 
 public class PolygonDto
 {

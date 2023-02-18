@@ -1,4 +1,4 @@
-﻿namespace travelAcrossUkraine.WebApi.Entities;
+﻿namespace TravelAcrossUkraine.WebApi.Entities;
 
 public class BaseEntity
 {

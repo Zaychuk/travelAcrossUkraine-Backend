@@ -11,5 +11,6 @@ public class MappingProfile : Profile
         CreateMap<GeoPointEntity, GeoPointDto>().ReverseMap();
         CreateMap<PolygonEntity, PolygonDto>().ReverseMap();
         CreateMap<CircleEntity, CircleDto>().ReverseMap();
+        CreateMap<TypeEntity, TypeDto>().ReverseMap();
     }
 }

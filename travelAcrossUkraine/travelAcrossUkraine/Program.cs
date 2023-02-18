@@ -28,6 +28,7 @@ services.AddSingleton<IPolygonService, PolygonService>();
 services.AddSingleton<ICircleService, CircleService>();
 services.AddSingleton<ITypeService, TypeService>();
 services.AddSingleton<ICategoryService, CategoryService>();
+services.AddSingleton<ILocationService, LocationService>();
 
 // Repositories
 services.AddSingleton<IGeoPointRepository, GeoPointRepository>();
@@ -35,8 +36,7 @@ services.AddSingleton<IPolygonRepository, PolygonRepository>();
 services.AddSingleton<ICircleRepository, CircleRepository>();
 services.AddSingleton<ITypeRepository, TypeRepository>();
 services.AddSingleton<ICategoryRepository, CategoryRepository>();
-
-
+services.AddSingleton<ILocationRepository, LocationRepository>();
 
 
 var app = builder.Build();

@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using TravelAcrossUkraine.WebApi.Dtos;
-using TravelAcrossUkraine.WebApi.Entities;
 using TravelAcrossUkraine.WebApi.Services;
 
 namespace TravelAcrossUkraine.Controllers

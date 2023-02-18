@@ -41,7 +41,7 @@ public class GeoPointService : IGeoPointService
 
     public async Task<GeoPointDto> GetByIdAsync(Guid id)
     {
-        var geoPoint = await _geoPointRepository.GetByIdAsync(id); 
+        var geoPoint = await _geoPointRepository.GetByIdAsync(id);
 
         return _mapper.Map<GeoPointDto>(geoPoint);
     }

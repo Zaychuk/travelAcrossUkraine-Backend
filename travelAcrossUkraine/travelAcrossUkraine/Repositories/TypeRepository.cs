@@ -17,8 +17,8 @@ public class TypeRepository : ITypeRepository
     {
         var context = new TravelAcrossUkraineContext();
 
-        type.CreatedDate = DateTime.Now;
-        type.UpdatedDate = DateTime.Now;
+        type.CreatedDate = DateTime.UtcNow;
+        type.UpdatedDate = DateTime.UtcNow;
 
         context.Add(type);
 
@@ -30,6 +30,7 @@ public class TypeRepository : ITypeRepository
         var context = new TravelAcrossUkraineContext();
         return await context.Types
             .Where(type => !type.IsDeleted)
+            .Include(type => type.Categories)
             .ToListAsync();
     }
 
@@ -38,6 +39,7 @@ public class TypeRepository : ITypeRepository
         var context = new TravelAcrossUkraineContext();
         return await context.Types
             .Where(type => !type.IsDeleted && type.Id.Equals(id))
+            .Include(type => type.Categories)
             .SingleAsync();
     }
 }

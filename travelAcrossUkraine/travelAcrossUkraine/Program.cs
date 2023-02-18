@@ -25,10 +25,13 @@ services.AddSingleton(mapper);
 // Sevices
 services.AddSingleton<IGeoPointService, GeoPointService>();
 services.AddSingleton<IPolygonService, PolygonService>();
+services.AddSingleton<ICircleService, CircleService>();
 
 // Repositories
 services.AddSingleton<IGeoPointRepository, GeoPointRepository>();
 services.AddSingleton<IPolygonRepository, PolygonRepository>();
+services.AddSingleton<ICircleRepository, CircleRepository>();
+
 
 
 

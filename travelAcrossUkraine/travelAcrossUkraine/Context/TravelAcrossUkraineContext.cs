@@ -20,13 +20,13 @@ public class TravelAcrossUkraineContext : DbContext
     }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<GeoPointEntity>(entity => 
+        modelBuilder.Entity<GeoPointEntity>(entity =>
         {
             entity.Property(p => p.CoordinateX).HasPrecision(20, 10);
             entity.Property(p => p.CoordinateY).HasPrecision(20, 10);
         });
 
-        modelBuilder.Entity<CircleEntity>(entity => 
+        modelBuilder.Entity<CircleEntity>(entity =>
         {
             entity.Property(p => p.Radius).HasPrecision(20, 10);
         });

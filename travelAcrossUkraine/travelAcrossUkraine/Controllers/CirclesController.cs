@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TravelAcrossUkraine.WebApi.Dtos;
 using TravelAcrossUkraine.WebApi.Services;
+using TravelAcrossUkraine.WebApi.Utility.Validators;
 
 namespace TravelAcrossUkraine.WebApi.Controllers;
 
@@ -30,7 +31,8 @@ public class CirclesController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Guid>> CreateAsync(CircleDto circle)
     {
-        // TODO: validation
+        Validators.ValidateCircleDto(circle);
+
         return await _circleService.CreateAsync(circle);
     }
 }

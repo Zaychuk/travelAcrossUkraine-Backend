@@ -2,6 +2,7 @@
 using TravelAcrossUkraine.WebApi.Dtos;
 using TravelAcrossUkraine.WebApi.Entities;
 using TravelAcrossUkraine.WebApi.Repositories;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace TravelAcrossUkraine.WebApi.Services;
 
@@ -15,11 +16,22 @@ public interface ILocationService
 public class LocationService : ILocationService
 {
     private readonly ILocationRepository _locationRepository;
+    private readonly IGeoPointService _geoPointService;
+    private readonly IPolygonService _polygonService;
+    private readonly ICircleService _circleService;
     private readonly IMapper _mapper;
 
-    public LocationService(ILocationRepository locationRepository, IMapper mapper)
+    public LocationService(
+        ILocationRepository locationRepository,
+        IGeoPointService geoPointService,
+        IPolygonService polygonService,
+        ICircleService circleService,
+        IMapper mapper)
     {
         _locationRepository = locationRepository;
+        _geoPointService = geoPointService;
+        _polygonService = polygonService;
+        _circleService = circleService;
         _mapper = mapper;
     }
 
@@ -45,6 +57,22 @@ public class LocationService : ILocationService
             };
         }).ToList();
 
+        if (createLocationDto.GeoPoint != null)
+        {
+            location.GeoPointId = await _geoPointService.CreateAsync(createLocationDto.GeoPoint);
+            location.GeoPoint = null;
+        }
+        else if (createLocationDto.Polygon != null)
+        {
+            location.PolygonId = await _polygonService.CreateAsync(createLocationDto.Polygon);
+            location.Polygon = null;
+        }
+        else if (createLocationDto.Circle != null)
+        {
+            location.CircleId = await _circleService.CreateAsync(createLocationDto.Circle);
+            location.Circle = null;
+        }
+
 
         await _locationRepository.CreateAsync(location);
 
@@ -61,18 +89,8 @@ public class LocationService : ILocationService
 
         foreach (var locationEntity in locationEntities)
         {
-            locationDtos.Single(location => location.Id.Equals(locationEntity.Id)).Images = locationEntity.Images.Select(image =>
-            {
-                string imageBase64Data = Convert.ToBase64String(image.ImageData);
-                string imageDataURL = string.Format("data:image/jpg;base64,{0}", imageBase64Data);
-
-                return new ImageWithoutLocationDto
-                {
-                    Id = image.Id,
-                    FileName = image.FileName,
-                    ImageDataUrl = imageDataURL
-                };
-            }).ToList();
+            var imageWithoutLocationDtos = locationEntity.Images.Select(image => MapImageEntityToImageWithoutLocationDto(image)).ToList();
+            locationDtos.Single(location => location.Id.Equals(locationEntity.Id)).Images = imageWithoutLocationDtos;
         }
 
         return locationDtos;
@@ -84,19 +102,23 @@ public class LocationService : ILocationService
 
         var locationDto = _mapper.Map<LocationDto>(locationEntity);
 
-        locationDto.Images = locationEntity.Images.Select(image =>
-        {
-            string imageBase64Data = Convert.ToBase64String(image.ImageData);
-            string imageDataURL = string.Format("data:image/jpg;base64,{0}", imageBase64Data);
-
-            return new ImageWithoutLocationDto
-            {
-                Id = image.Id,
-                FileName = image.FileName,
-                ImageDataUrl = imageDataURL
-            };
-        }).ToList();
+        locationDto.Images = locationEntity.Images
+            .Select(image => MapImageEntityToImageWithoutLocationDto(image))
+            .ToList();
 
         return locationDto;
+    }
+
+    private static ImageWithoutLocationDto MapImageEntityToImageWithoutLocationDto(ImageEntity imageEntity)
+    {
+        string imageBase64Data = Convert.ToBase64String(imageEntity.ImageData);
+        string imageDataURL = string.Format("data:image/jpg;base64,{0}", imageBase64Data);
+
+        return new ImageWithoutLocationDto
+        {
+            Id = imageEntity.Id,
+            FileName = imageEntity.FileName,
+            ImageDataUrl = imageDataURL
+        };
     }
 }

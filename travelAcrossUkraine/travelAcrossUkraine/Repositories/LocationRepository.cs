@@ -38,6 +38,9 @@ public class LocationRepository : ILocationRepository
             .Where(location => !location.IsDeleted)
             .Include(location => location.Images)
             .Include(location => location.Category).ThenInclude(category => category.Type)
+            .Include(location => location.GeoPoint)
+            .Include(location => location.Polygon).ThenInclude(polygon => polygon.GeoPoints)
+            .Include(location => location.Circle).ThenInclude(circle => circle.CenterGeoPoint)
             .ToListAsync();
     }
 
@@ -49,6 +52,9 @@ public class LocationRepository : ILocationRepository
             .Where(polygon => polygon.Id.Equals(id) && !polygon.IsDeleted)
             .Include(location => location.Images)
             .Include(location => location.Category).ThenInclude(category => category.Type)
+            .Include(location => location.GeoPoint)
+            .Include(location => location.Polygon).ThenInclude(polygon => polygon.GeoPoints)
+            .Include(location => location.Circle).ThenInclude(circle => circle.CenterGeoPoint)
             .SingleAsync();
     }
 }

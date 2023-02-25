@@ -8,4 +8,7 @@ public class CreateLocationDto
     public string? WikipediaUrl { get; set; }
     public string? PetitionUrl { get; set; }
     public Guid CategoryId { get; set; }
+    public GeoPointDto? GeoPoint { get; set; }
+    public PolygonDto? Polygon { get; set; }
+    public CircleDto? Circle { get; set; }
 }

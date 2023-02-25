@@ -9,4 +9,7 @@ public class LocationDto
     public string? WikipediaUrl { get; set; }
     public string? PetitionUrl { get; set; }
     public CategoryDto Category { get; set; }
+    public GeoPointDto? GeoPoint { get; set; }
+    public PolygonDto? Polygon { get; set; }
+    public CircleDto? Circle { get; set; }
 }

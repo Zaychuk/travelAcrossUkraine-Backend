@@ -9,4 +9,10 @@ public class LocationEntity : BaseEntity
     public string? PetitionUrl { get; set; }
     public CategoryEntity Category { get; set; }
     public Guid CategoryId { get; set; }
+    public PolygonEntity? Polygon { get; set; }
+    public Guid? PolygonId { get; set; }
+    public GeoPointEntity? GeoPoint { get; set; }
+    public Guid? GeoPointId { get; set; }
+    public CircleEntity? Circle { get; set; }
+    public Guid? CircleId { get; set; }
 }

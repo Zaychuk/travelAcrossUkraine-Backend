@@ -58,7 +58,8 @@ public static class Validators
             || !createLocationDto.ImageFiles.Any()
             || createLocationDto.CategoryId == Guid.Empty
             || string.IsNullOrWhiteSpace(createLocationDto.Description)
-            || string.IsNullOrWhiteSpace(createLocationDto.Name))
+            || string.IsNullOrWhiteSpace(createLocationDto.Name)
+            || (createLocationDto.GeoPoint == null && createLocationDto.Polygon == null && createLocationDto.Circle == null))
         {
             throw new BadHttpRequestException($"{nameof(CreateLocationDto)}: {ErrorMessages.NotAllRequiredDataProvided}");
         }

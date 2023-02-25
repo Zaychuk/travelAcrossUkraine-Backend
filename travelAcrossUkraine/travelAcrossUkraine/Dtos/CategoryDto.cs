@@ -6,5 +6,3 @@ public class CategoryDto
     public string Name { get; set; }
     public TypeWithoutCategoryDto Type { get; set; }
 }
-
-

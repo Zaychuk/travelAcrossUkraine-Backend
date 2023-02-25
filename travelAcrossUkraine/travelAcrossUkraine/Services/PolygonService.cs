@@ -21,6 +21,7 @@ public class PolygonService : IPolygonService
         _polygonRepository = polygonRepository;
         _mapper = mapper;
     }
+
     public async Task<Guid> CreateAsync(PolygonDto polygonDto)
     {
         var polygon = _mapper.Map<PolygonEntity>(polygonDto);

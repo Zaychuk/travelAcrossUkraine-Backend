@@ -68,6 +68,7 @@ public class LocationService : ILocationService
 
                 return new ImageWithoutLocationDto
                 {
+                    Id = image.Id,
                     FileName = image.FileName,
                     ImageDataUrl = imageDataURL
                 };
@@ -90,6 +91,7 @@ public class LocationService : ILocationService
 
             return new ImageWithoutLocationDto
             {
+                Id = image.Id,
                 FileName = image.FileName,
                 ImageDataUrl = imageDataURL
             };

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TravelAcrossUkraine.WebApi.Dtos;
 using TravelAcrossUkraine.WebApi.Services;
+using TravelAcrossUkraine.WebApi.Utility.Validators;
 
 namespace TravelAcrossUkraine.WebApi.Controllers;
 
@@ -30,6 +31,8 @@ public class TypesController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Guid>> CreateAsync(CreateTypeDto type)
     {
+        Validators.ValidateCreateTypeDto(type);
+
         return await _typeService.CreateAsync(type);
     }
 }

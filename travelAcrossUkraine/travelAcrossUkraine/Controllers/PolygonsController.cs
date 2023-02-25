@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TravelAcrossUkraine.WebApi.Dtos;
 using TravelAcrossUkraine.WebApi.Services;
+using TravelAcrossUkraine.WebApi.Utility.Validators;
 
 namespace TravelAcrossUkraine.WebApi.Controllers;
 
@@ -18,21 +19,20 @@ public class PolygonsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<PolygonDto>>> GetAllAsync()
     {
-        var polygons = await _polygonService.GetAllAsync();
-        return polygons;
+        return await _polygonService.GetAllAsync();
     }
 
     [HttpGet("{polygonId}")]
     public async Task<ActionResult<PolygonDto>> GetByIdAsync(Guid polygonId)
     {
-        var polygon = await _polygonService.GetByIdAsync(polygonId);
-        return polygon;
+        return await _polygonService.GetByIdAsync(polygonId);
     }
 
     [HttpPost]
     public async Task<ActionResult<Guid>> CreateAsync(PolygonDto polygon)
     {
-        var id = await _polygonService.CreateAsync(polygon);
-        return id;
+        Validators.ValidatePolygonDto(polygon);
+
+        return await _polygonService.CreateAsync(polygon);
     }
 }

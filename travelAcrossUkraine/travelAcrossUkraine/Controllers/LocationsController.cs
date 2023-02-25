@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TravelAcrossUkraine.WebApi.Dtos;
 using TravelAcrossUkraine.WebApi.Services;
+using TravelAcrossUkraine.WebApi.Utility.Validators;
 
 namespace TravelAcrossUkraine.WebApi.Controllers;
 
@@ -18,21 +19,20 @@ public class LocationsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<LocationDto>>> GetAllAsync()
     {
-        var locations = await _locationService.GetAllAsync();
-        return locations;
+        return await _locationService.GetAllAsync();
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<LocationDto>> GetByIdAsync(Guid id)
     {
-        var location = await _locationService.GetByIdAsync(id);
-        return location;
+        return await _locationService.GetByIdAsync(id);
     }
 
     [HttpPost]
     public async Task<ActionResult<Guid>> CreateAsync([FromForm] CreateLocationDto location)
     {
-        var id = await _locationService.CreateAsync(location);
-        return id;
+        Validators.ValidateCreateLocationDto(location);
+
+        return await _locationService.CreateAsync(location);
     }
 }

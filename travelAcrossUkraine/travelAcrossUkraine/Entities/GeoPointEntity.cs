@@ -1,4 +1,4 @@
-﻿using TravelAcrossUkraine.WebApi.Enums;
+﻿using TravelAcrossUkraine.WebApi.Utility.Enums;
 
 namespace TravelAcrossUkraine.WebApi.Entities;
 

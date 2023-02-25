@@ -1,11 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using TravelAcrossUkraine.WebApi.Dtos;
 using TravelAcrossUkraine.WebApi.Services;
+using TravelAcrossUkraine.WebApi.Utility.Validators;
 
 namespace TravelAcrossUkraine.Controllers;
 
+[Route("api/[controller]")]
 [ApiController]
-[Route("[controller]")]
 public class GeoPointsController : ControllerBase
 {
     private readonly IGeoPointService _geoPointService;
@@ -48,7 +49,8 @@ public class GeoPointsController : ControllerBase
     [HttpPost()]
     public async Task<ActionResult<Guid>> CreateAsync(GeoPointDto geoPoint)
     {
-        var result = await _geoPointService.CreateAsync(geoPoint);
-        return result;
+        Validators.ValidateGeoPointDto(geoPoint);
+
+        return await _geoPointService.CreateAsync(geoPoint);
     }
 }

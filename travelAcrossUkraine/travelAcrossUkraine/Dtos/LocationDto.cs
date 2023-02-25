@@ -9,5 +9,4 @@ public class LocationDto
     public string? WikipediaUrl { get; set; }
     public string? PetitionUrl { get; set; }
     public CategoryDto Category { get; set; }
-    public Guid CategoryId { get; set; }
 }

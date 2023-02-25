@@ -16,23 +16,23 @@ public class LocationsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<PolygonDto>>> GetAllAsync()
+    public async Task<ActionResult<List<LocationDto>>> GetAllAsync()
     {
         var locations = await _locationService.GetAllAsync();
-        return Ok(locations);
+        return locations;
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<PolygonDto>> GetByIdAsync(Guid id)
+    public async Task<ActionResult<LocationDto>> GetByIdAsync(Guid id)
     {
         var location = await _locationService.GetByIdAsync(id);
-        return Ok(location);
+        return location;
     }
 
     [HttpPost]
     public async Task<ActionResult<Guid>> CreateAsync([FromForm] CreateLocationDto location)
     {
         var id = await _locationService.CreateAsync(location);
-        return Ok(id);
+        return id;
     }
 }

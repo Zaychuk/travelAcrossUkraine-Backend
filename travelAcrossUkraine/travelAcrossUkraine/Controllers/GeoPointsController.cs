@@ -22,9 +22,9 @@ public class GeoPointsController : ControllerBase
     /// Returns all geopoint on the map
     /// </returns>
     [HttpGet()]
-    public async Task<ActionResult<GeoPointDto>> GetAllAsync()
+    public async Task<ActionResult<List<GeoPointDto>>> GetAllAsync()
     {
-        return Ok(await _geoPointService.GetAllAsync());
+        return await _geoPointService.GetAllAsync();
     }
 
     /// <summary>
@@ -37,7 +37,7 @@ public class GeoPointsController : ControllerBase
     {
         try
         {
-            return Ok(await _geoPointService.GetByIdAsync(id));
+            return await _geoPointService.GetByIdAsync(id);
         }
         catch (Exception ex)
         {
@@ -49,6 +49,6 @@ public class GeoPointsController : ControllerBase
     public async Task<ActionResult<Guid>> CreateAsync(GeoPointDto geoPoint)
     {
         var result = await _geoPointService.CreateAsync(geoPoint);
-        return Ok(result);
+        return result;
     }
 }

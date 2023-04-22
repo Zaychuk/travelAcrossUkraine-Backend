@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using TravelAcrossUkraine.WebApi.Dtos;
 using TravelAcrossUkraine.WebApi.Entities;
+using TravelAcrossUkraine.WebApi.Exceptions;
+using TravelAcrossUkraine.WebApi.Helpers;
 using TravelAcrossUkraine.WebApi.Repositories;
 
 namespace TravelAcrossUkraine.WebApi.Services;
@@ -10,6 +12,7 @@ public interface IGeoPointService
     Task<List<GeoPointDto>> GetAllAsync();
     Task<Guid> CreateAsync(GeoPointDto geoPoint);
     Task<GeoPointDto> GetByIdAsync(Guid id);
+    Task DeleteAsync(Guid id);
 }
 
 public class GeoPointService : IGeoPointService
@@ -26,7 +29,8 @@ public class GeoPointService : IGeoPointService
     public async Task<Guid> CreateAsync(GeoPointDto geoPointDto)
     {
         var geoPoint = _mapper.Map<GeoPointEntity>(geoPointDto);
-        geoPoint.Id = Guid.NewGuid();
+        BaseEntityHelper.SetBaseProperties(geoPoint);
+
         await _geoPointRepository.CreateAsync(geoPoint);
 
         return geoPoint.Id;
@@ -41,8 +45,15 @@ public class GeoPointService : IGeoPointService
 
     public async Task<GeoPointDto> GetByIdAsync(Guid id)
     {
-        var geoPoint = await _geoPointRepository.GetByIdAsync(id);
+        var geoPoint = await _geoPointRepository.GetByIdAsync(id) ?? throw new NotFoundException($"Geopoint {id} was not found");
 
         return _mapper.Map<GeoPointDto>(geoPoint);
+    }
+
+    public async Task DeleteAsync(Guid id)
+    {
+        var geoPoint = await _geoPointRepository.GetByIdAsync(id) ?? throw new NotFoundException($"Geopoint {id} was not found");
+
+        await _geoPointRepository.DeleteAsync(geoPoint);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using TravelAcrossUkraine.WebApi.Dtos;
 using TravelAcrossUkraine.WebApi.Entities;
+using TravelAcrossUkraine.WebApi.Helpers;
 using TravelAcrossUkraine.WebApi.Repositories;
 
 namespace TravelAcrossUkraine.WebApi.Services;
@@ -10,6 +11,7 @@ public interface ICategoryService
     Task<List<CategoryDto>> GetAllAsync();
     Task<CategoryDto> GetByIdAsync(Guid id);
     Task<Guid> CreateAsync(CreateCategoryDto categoryDto);
+    Task DeleteAsync(Guid id);
 }
 
 public class CategoryService : ICategoryService
@@ -22,10 +24,11 @@ public class CategoryService : ICategoryService
         _categoryRepository = categoryRepository;
         _mapper = mapper;
     }
+
     public async Task<Guid> CreateAsync(CreateCategoryDto categoryDto)
     {
         var category = _mapper.Map<CategoryEntity>(categoryDto);
-        category.Id = Guid.NewGuid();
+        BaseEntityHelper.SetBaseProperties(category);
 
         await _categoryRepository.CreateAsync(category);
 
@@ -46,5 +49,12 @@ public class CategoryService : ICategoryService
         var categoryEntity = await _categoryRepository.GetByIdAsync(id);
 
         return _mapper.Map<CategoryDto>(categoryEntity);
+    }
+
+    public async Task DeleteAsync(Guid id)
+    {
+        var categoryEntity = await _categoryRepository.GetByIdAsync(id) ?? throw new BadHttpRequestException($"Category {id} has not been found");
+
+        await _categoryRepository.DeleteAsync(categoryEntity);
     }
 }

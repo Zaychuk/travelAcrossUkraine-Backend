@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using TravelAcrossUkraine.WebApi.Dtos;
 using TravelAcrossUkraine.WebApi.Entities;
+using TravelAcrossUkraine.WebApi.Exceptions;
+using TravelAcrossUkraine.WebApi.Helpers;
 using TravelAcrossUkraine.WebApi.Repositories;
 
 namespace TravelAcrossUkraine.WebApi.Services;
@@ -10,6 +12,7 @@ public interface ITypeService
     Task<List<TypeDto>> GetAllAsync();
     Task<TypeDto> GetByIdAsync(Guid id);
     Task<Guid> CreateAsync(CreateTypeDto typeDto);
+    Task DeleteAsync(Guid id);
 }
 
 public class TypeService : ITypeService
@@ -22,10 +25,11 @@ public class TypeService : ITypeService
         _typeRepository = typeRepository;
         _mapper = mapper;
     }
+
     public async Task<Guid> CreateAsync(CreateTypeDto typeDto)
     {
         var type = _mapper.Map<TypeEntity>(typeDto);
-        type.Id = Guid.NewGuid();
+        BaseEntityHelper.SetBaseProperties(type);
 
         await _typeRepository.CreateAsync(type);
 
@@ -43,8 +47,15 @@ public class TypeService : ITypeService
 
     public async Task<TypeDto> GetByIdAsync(Guid id)
     {
-        var typeEntity = await _typeRepository.GetByIdAsync(id);
+        var typeEntity = await _typeRepository.GetByIdAsync(id) ?? throw new NotFoundException($"Type {id} was not found");
 
         return _mapper.Map<TypeDto>(typeEntity);
+    }
+
+    public async Task DeleteAsync(Guid id)
+    {
+        var typeEntity = await _typeRepository.GetByIdAsync(id) ?? throw new NotFoundException($"Type {id} was not found");
+
+        await _typeRepository.DeleteAsync(typeEntity);
     }
 }

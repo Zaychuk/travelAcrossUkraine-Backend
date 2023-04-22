@@ -9,6 +9,7 @@ public interface ICategoryRepository
     Task<List<CategoryEntity>> GetAllAsync();
     Task<CategoryEntity> GetByIdAsync(Guid id);
     Task CreateAsync(CategoryEntity category);
+    Task DeleteAsync(CategoryEntity category);
 }
 
 public class CategoryRepository : ICategoryRepository
@@ -16,9 +17,6 @@ public class CategoryRepository : ICategoryRepository
     public async Task CreateAsync(CategoryEntity category)
     {
         var context = new TravelAcrossUkraineContext();
-
-        category.CreatedDate = DateTime.UtcNow;
-        category.UpdatedDate = DateTime.UtcNow;
 
         context.Add(category);
 
@@ -30,7 +28,6 @@ public class CategoryRepository : ICategoryRepository
         var context = new TravelAcrossUkraineContext();
 
         return await context.Categories
-            .Where(category => !category.IsDeleted)
             .Include(category => category.Type)
             .ToListAsync();
     }
@@ -40,8 +37,18 @@ public class CategoryRepository : ICategoryRepository
         var context = new TravelAcrossUkraineContext();
 
         return await context.Categories
-            .Where(category => !category.IsDeleted && category.Id.Equals(id))
+            .Where(category => category.Id.Equals(id))
             .Include(category => category.Type)
-            .SingleAsync();
+            .FirstOrDefaultAsync();
+    }
+
+
+    public async Task DeleteAsync(CategoryEntity category)
+    {
+        var context = new TravelAcrossUkraineContext();
+
+        context.Entry(category).State = EntityState.Deleted;
+
+        await context.SaveChangesAsync();
     }
 }

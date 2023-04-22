@@ -9,6 +9,7 @@ public interface IPolygonRepository
     Task<List<PolygonEntity>> GetAllAsync();
     Task<PolygonEntity> GetByIdAsync(Guid polygonId);
     Task CreateAsync(PolygonEntity polygon);
+    Task DeleteAsync(PolygonEntity polygon);
 }
 
 public class PolygonRepository : IPolygonRepository
@@ -16,16 +17,8 @@ public class PolygonRepository : IPolygonRepository
     public async Task CreateAsync(PolygonEntity polygon)
     {
         using var context = new TravelAcrossUkraineContext();
-        polygon.CreatedDate = DateTime.UtcNow;
-        polygon.UpdatedDate = DateTime.UtcNow;
 
-        context.Entry(polygon).State = EntityState.Added;
-        polygon.GeoPoints.ForEach(geoPoint =>
-        {
-            geoPoint.CreatedDate = DateTime.UtcNow;
-            geoPoint.UpdatedDate = DateTime.UtcNow;
-            context.Entry(geoPoint).State = EntityState.Added;
-        });
+        context.Add(polygon);
 
         await context.SaveChangesAsync();
     }
@@ -35,7 +28,6 @@ public class PolygonRepository : IPolygonRepository
         using var context = new TravelAcrossUkraineContext();
 
         return await context.Polygons
-            .Where(polygon => !polygon.IsDeleted)
             .Include(polygon => polygon.GeoPoints)
             .ToListAsync();
     }
@@ -45,9 +37,18 @@ public class PolygonRepository : IPolygonRepository
         using var context = new TravelAcrossUkraineContext();
 
         return await context.Polygons
-            .Where(polygon => polygon.Id.Equals(id) && !polygon.IsDeleted)
+            .Where(polygon => polygon.Id.Equals(id))
             .Include(polygon => polygon.GeoPoints)
-            .SingleAsync();
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task DeleteAsync(PolygonEntity polygon)
+    {
+        var context = new TravelAcrossUkraineContext();
+
+        context.Entry(polygon).State = EntityState.Deleted;
+
+        await context.SaveChangesAsync();
     }
 
 }

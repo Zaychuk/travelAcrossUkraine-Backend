@@ -9,6 +9,7 @@ public interface ILocationRepository
     Task<List<LocationEntity>> GetAllAsync();
     Task<LocationEntity> GetByIdAsync(Guid id);
     Task CreateAsync(LocationEntity circle);
+    Task DeleteAsync(LocationEntity location);
 }
 
 public class LocationRepository : ILocationRepository
@@ -16,16 +17,8 @@ public class LocationRepository : ILocationRepository
     public async Task CreateAsync(LocationEntity location)
     {
         using var context = new TravelAcrossUkraineContext();
-        location.CreatedDate = DateTime.UtcNow;
-        location.UpdatedDate = DateTime.UtcNow;
 
-        context.Entry(location).State = EntityState.Added;
-        location.Images.ForEach(image =>
-        {
-            image.CreatedDate = DateTime.UtcNow;
-            image.UpdatedDate = DateTime.UtcNow;
-            context.Entry(image).State = EntityState.Added;
-        });
+        context.Locations.Add(location);
 
         await context.SaveChangesAsync();
     }
@@ -35,7 +28,6 @@ public class LocationRepository : ILocationRepository
         using var context = new TravelAcrossUkraineContext();
 
         return await context.Locations
-            .Where(location => !location.IsDeleted)
             .Include(location => location.Images)
             .Include(location => location.Category).ThenInclude(category => category.Type)
             .Include(location => location.GeoPoint)
@@ -49,12 +41,21 @@ public class LocationRepository : ILocationRepository
         using var context = new TravelAcrossUkraineContext();
 
         return await context.Locations
-            .Where(polygon => polygon.Id.Equals(id) && !polygon.IsDeleted)
+            .Where(polygon => polygon.Id.Equals(id))
             .Include(location => location.Images)
             .Include(location => location.Category).ThenInclude(category => category.Type)
             .Include(location => location.GeoPoint)
             .Include(location => location.Polygon).ThenInclude(polygon => polygon.GeoPoints)
             .Include(location => location.Circle).ThenInclude(circle => circle.CenterGeoPoint)
-            .SingleAsync();
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task DeleteAsync(LocationEntity location)
+    {
+        var context = new TravelAcrossUkraineContext();
+
+        context.Entry(location).State = EntityState.Deleted;
+
+        await context.SaveChangesAsync();
     }
 }

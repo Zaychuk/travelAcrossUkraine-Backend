@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TravelAcrossUkraine.WebApi.Dtos;
 using TravelAcrossUkraine.WebApi.Services;
+using TravelAcrossUkraine.WebApi.Utility;
 using TravelAcrossUkraine.WebApi.Utility.Validators;
 
 namespace TravelAcrossUkraine.Controllers;
@@ -10,10 +11,12 @@ namespace TravelAcrossUkraine.Controllers;
 public class GeoPointsController : ControllerBase
 {
     private readonly IGeoPointService _geoPointService;
+    private readonly ILogger<GeoPointsController> _logger;
 
-    public GeoPointsController(IGeoPointService geoPointService)
+    public GeoPointsController(IGeoPointService geoPointService, ILogger<GeoPointsController> logger)
     {
         _geoPointService = geoPointService;
+        _logger = logger;
     }
 
     /// <summary>
@@ -25,7 +28,14 @@ public class GeoPointsController : ControllerBase
     [HttpGet()]
     public async Task<ActionResult<List<GeoPointDto>>> GetAllAsync()
     {
-        return await _geoPointService.GetAllAsync();
+        try
+        {
+            return await _geoPointService.GetAllAsync();
+        }
+        catch (Exception ex)
+        {
+            return ExceptionHandler.Handle(ex, _logger);
+        }
     }
 
     /// <summary>
@@ -42,15 +52,38 @@ public class GeoPointsController : ControllerBase
         }
         catch (Exception ex)
         {
-            return NotFound(ex.Message);
+            return ExceptionHandler.Handle(ex, _logger);
         }
     }
 
-    [HttpPost()]
+    [HttpPost]
     public async Task<ActionResult<Guid>> CreateAsync(GeoPointDto geoPoint)
     {
-        Validators.ValidateGeoPointDto(geoPoint);
+        try
+        {
+            Validators.ValidateGeoPointDto(geoPoint);
 
-        return await _geoPointService.CreateAsync(geoPoint);
+            return await _geoPointService.CreateAsync(geoPoint);
+        }
+        catch (Exception ex)
+        {
+            return ExceptionHandler.Handle(ex, _logger);
+        }
     }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult<Guid>> CreateAsync(Guid id)
+    {
+        try
+        {
+            await _geoPointService.DeleteAsync(id);
+
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return ExceptionHandler.Handle(ex, _logger);
+        }
+    }
+
 }

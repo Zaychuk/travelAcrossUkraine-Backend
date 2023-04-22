@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using TravelAcrossUkraine.WebApi.Dtos;
 using TravelAcrossUkraine.WebApi.Entities;
+using TravelAcrossUkraine.WebApi.Exceptions;
+using TravelAcrossUkraine.WebApi.Helpers;
 using TravelAcrossUkraine.WebApi.Repositories;
 
 namespace TravelAcrossUkraine.WebApi.Services;
@@ -10,7 +12,9 @@ public interface ICircleService
     Task<List<CircleDto>> GetAllAsync();
     Task<CircleDto> GetByIdAsync(Guid id);
     Task<Guid> CreateAsync(CircleDto circle);
+    Task DeleteAsync(Guid id);
 }
+
 public class CircleService : ICircleService
 {
     private readonly ICircleRepository _circleRepository;
@@ -26,8 +30,8 @@ public class CircleService : ICircleService
     {
         var circle = _mapper.Map<CircleEntity>(circleDto);
 
-        circle.Id = Guid.NewGuid();
-        circle.CenterGeoPoint.Id = Guid.NewGuid();
+        BaseEntityHelper.SetBaseProperties(circle);
+        BaseEntityHelper.SetBaseProperties(circle.CenterGeoPoint);
 
         await _circleRepository.CreateAsync(circle);
 
@@ -45,8 +49,15 @@ public class CircleService : ICircleService
 
     public async Task<CircleDto> GetByIdAsync(Guid id)
     {
-        var circleEntity = await _circleRepository.GetByIdAsync(id);
+        var circleEntity = await _circleRepository.GetByIdAsync(id) ?? throw new NotFoundException($"Circle {id} was not found");
 
         return _mapper.Map<CircleDto>(circleEntity);
+    }
+
+    public async Task DeleteAsync(Guid id)
+    {
+        var circleEntity = await _circleRepository.GetByIdAsync(id) ?? throw new NotFoundException($"Circle {id} was not found");
+
+        await _circleRepository.DeleteAsync(circleEntity);
     }
 }

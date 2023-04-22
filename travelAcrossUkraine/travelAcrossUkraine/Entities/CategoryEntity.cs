@@ -1,4 +1,6 @@
-﻿namespace TravelAcrossUkraine.WebApi.Entities;
+﻿using TravelAcrossUkraine.WebApi.Entities.BaseEntities;
+
+namespace TravelAcrossUkraine.WebApi.Entities;
 
 public class CategoryEntity : BaseEntity
 {

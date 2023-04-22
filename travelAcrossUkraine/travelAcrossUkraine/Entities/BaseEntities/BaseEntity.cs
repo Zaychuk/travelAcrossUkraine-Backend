@@ -1,9 +1,8 @@
-﻿namespace TravelAcrossUkraine.WebApi.Entities;
+﻿namespace TravelAcrossUkraine.WebApi.Entities.BaseEntities;
 
-public class BaseEntity
+public class BaseEntity : SoftDeleteBaseEntity
 {
     public Guid Id { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
-    public bool IsDeleted { get; set; }
 }

@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using TravelAcrossUkraine.WebApi.Dtos;
 using TravelAcrossUkraine.WebApi.Entities;
+using TravelAcrossUkraine.WebApi.Exceptions;
+using TravelAcrossUkraine.WebApi.Helpers;
 using TravelAcrossUkraine.WebApi.Repositories;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace TravelAcrossUkraine.WebApi.Services;
 
@@ -11,6 +12,7 @@ public interface ILocationService
     Task<List<LocationDto>> GetAllAsync();
     Task<LocationDto> GetByIdAsync(Guid id);
     Task<Guid> CreateAsync(CreateLocationDto createLocationDto);
+    Task DeleteAsync(Guid id);
 }
 
 public class LocationService : ILocationService
@@ -38,7 +40,8 @@ public class LocationService : ILocationService
     public async Task<Guid> CreateAsync(CreateLocationDto createLocationDto)
     {
         var location = _mapper.Map<LocationEntity>(createLocationDto);
-        location.Id = Guid.NewGuid();
+        BaseEntityHelper.SetBaseProperties(location);
+
         location.Images = createLocationDto.ImageFiles.Select(imageFile =>
         {
             var ms = new MemoryStream();
@@ -49,30 +52,28 @@ public class LocationService : ILocationService
             ms.Close();
             ms.Dispose();
 
-            return new ImageEntity
+            var imageToCreate = new ImageEntity
             {
-                Id = Guid.NewGuid(),
                 FileName = imageFile.FileName,
                 ImageData = imageData
             };
+            BaseEntityHelper.SetBaseProperties(imageToCreate);
+
+            return imageToCreate;
         }).ToList();
 
-        if (createLocationDto.GeoPoint != null)
+        if (location.GeoPoint != null)
         {
-            location.GeoPointId = await _geoPointService.CreateAsync(createLocationDto.GeoPoint);
-            location.GeoPoint = null;
+            BaseEntityHelper.SetBaseProperties(location.GeoPoint);
         }
-        else if (createLocationDto.Polygon != null)
+        if (location.Polygon != null)
         {
-            location.PolygonId = await _polygonService.CreateAsync(createLocationDto.Polygon);
-            location.Polygon = null;
+            BaseEntityHelper.SetBaseProperties(location.Polygon);
         }
-        else if (createLocationDto.Circle != null)
+        if (location.Circle != null)
         {
-            location.CircleId = await _circleService.CreateAsync(createLocationDto.Circle);
-            location.Circle = null;
+            BaseEntityHelper.SetBaseProperties(location.Circle);
         }
-
 
         await _locationRepository.CreateAsync(location);
 
@@ -98,7 +99,7 @@ public class LocationService : ILocationService
 
     public async Task<LocationDto> GetByIdAsync(Guid id)
     {
-        var locationEntity = await _locationRepository.GetByIdAsync(id);
+        var locationEntity = await _locationRepository.GetByIdAsync(id) ?? throw new NotFoundException($"Location {id} was not found");
 
         var locationDto = _mapper.Map<LocationDto>(locationEntity);
 
@@ -107,6 +108,13 @@ public class LocationService : ILocationService
             .ToList();
 
         return locationDto;
+    }
+
+    public async Task DeleteAsync(Guid id)
+    {
+        var locationEntity = await _locationRepository.GetByIdAsync(id) ?? throw new NotFoundException($"Location {id} was not found");
+
+        await _locationRepository.DeleteAsync(locationEntity);
     }
 
     private static ImageWithoutLocationDto MapImageEntityToImageWithoutLocationDto(ImageEntity imageEntity)

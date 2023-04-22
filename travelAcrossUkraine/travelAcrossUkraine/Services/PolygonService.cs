@@ -30,6 +30,7 @@ public class PolygonService : IPolygonService
         var polygon = _mapper.Map<PolygonEntity>(polygonDto);
         BaseEntityHelper.SetBaseProperties(polygon);
 
+        // TODO: move to PolygonHelper when one created
         polygon.GeoPoints = polygon.GeoPoints.Select((geoPoint, index) =>
         {
             geoPoint.SequenceNumber = index;

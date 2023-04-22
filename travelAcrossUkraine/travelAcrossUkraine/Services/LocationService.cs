@@ -18,22 +18,11 @@ public interface ILocationService
 public class LocationService : ILocationService
 {
     private readonly ILocationRepository _locationRepository;
-    private readonly IGeoPointService _geoPointService;
-    private readonly IPolygonService _polygonService;
-    private readonly ICircleService _circleService;
     private readonly IMapper _mapper;
 
-    public LocationService(
-        ILocationRepository locationRepository,
-        IGeoPointService geoPointService,
-        IPolygonService polygonService,
-        ICircleService circleService,
-        IMapper mapper)
+    public LocationService(ILocationRepository locationRepository, IMapper mapper)
     {
         _locationRepository = locationRepository;
-        _geoPointService = geoPointService;
-        _polygonService = polygonService;
-        _circleService = circleService;
         _mapper = mapper;
     }
 
@@ -69,10 +58,19 @@ public class LocationService : ILocationService
         if (location.Polygon != null)
         {
             BaseEntityHelper.SetBaseProperties(location.Polygon);
+
+            // TODO: move to PolygonHelper when one created
+            location.Polygon.GeoPoints = location.Polygon.GeoPoints.Select((geoPoint, index) =>
+            {
+                geoPoint.SequenceNumber = index;
+                BaseEntityHelper.SetBaseProperties(geoPoint);
+                return geoPoint;
+            }).ToList();
         }
         if (location.Circle != null)
         {
             BaseEntityHelper.SetBaseProperties(location.Circle);
+            BaseEntityHelper.SetBaseProperties(location.Circle.CenterGeoPoint);
         }
 
         await _locationRepository.CreateAsync(location);

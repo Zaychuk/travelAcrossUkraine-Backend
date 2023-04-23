@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TravelAcrossUkraine.WebApi.Dtos;
 using TravelAcrossUkraine.WebApi.Services;
 using TravelAcrossUkraine.WebApi.Utility;
@@ -8,6 +9,7 @@ namespace TravelAcrossUkraine.WebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class CirclesController : ControllerBase
 {
     private readonly ICircleService _circleService;
@@ -46,6 +48,7 @@ public class CirclesController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<Guid>> CreateAsync(CircleDto circle)
     {
         try
@@ -61,6 +64,7 @@ public class CirclesController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult> DeleteAsync(Guid id)
     {
         try

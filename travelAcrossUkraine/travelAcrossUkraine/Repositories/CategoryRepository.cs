@@ -14,29 +14,30 @@ public interface ICategoryRepository
 
 public class CategoryRepository : ICategoryRepository
 {
+    private readonly TravelAcrossUkraineContext _context;
+
+    public CategoryRepository(TravelAcrossUkraineContext context)
+    {
+        _context = context;
+    }
+
     public async Task CreateAsync(CategoryEntity category)
     {
-        var context = new TravelAcrossUkraineContext();
+        _context.Add(category);
 
-        context.Add(category);
-
-        await context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
     }
 
     public async Task<List<CategoryEntity>> GetAllAsync()
     {
-        var context = new TravelAcrossUkraineContext();
-
-        return await context.Categories
+        return await _context.Categories
             .Include(category => category.Type)
             .ToListAsync();
     }
 
     public async Task<CategoryEntity> GetByIdAsync(Guid id)
     {
-        var context = new TravelAcrossUkraineContext();
-
-        return await context.Categories
+        return await _context.Categories
             .Where(category => category.Id.Equals(id))
             .Include(category => category.Type)
             .FirstOrDefaultAsync();
@@ -45,10 +46,8 @@ public class CategoryRepository : ICategoryRepository
 
     public async Task DeleteAsync(CategoryEntity category)
     {
-        var context = new TravelAcrossUkraineContext();
+        _context.Entry(category).State = EntityState.Deleted;
 
-        context.Entry(category).State = EntityState.Deleted;
-
-        await context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
     }
 }

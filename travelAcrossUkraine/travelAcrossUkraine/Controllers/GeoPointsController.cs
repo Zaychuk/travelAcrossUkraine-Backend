@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TravelAcrossUkraine.WebApi.Dtos;
 using TravelAcrossUkraine.WebApi.Services;
@@ -8,6 +9,7 @@ namespace TravelAcrossUkraine.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class GeoPointsController : ControllerBase
 {
     private readonly IGeoPointService _geoPointService;
@@ -57,6 +59,7 @@ public class GeoPointsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<Guid>> CreateAsync(GeoPointDto geoPoint)
     {
         try
@@ -72,7 +75,8 @@ public class GeoPointsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<ActionResult<Guid>> CreateAsync(Guid id)
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<Guid>> DeleteAsync(Guid id)
     {
         try
         {

@@ -14,29 +14,30 @@ public interface ICircleRepository
 
 public class CircleRepository : ICircleRepository
 {
+    private readonly TravelAcrossUkraineContext _context;
+
+    public CircleRepository(TravelAcrossUkraineContext context)
+    {
+        _context = context;
+    }
+
     public async Task CreateAsync(CircleEntity circle)
     {
-        var context = new TravelAcrossUkraineContext();
+        _context.Circles.Add(circle);
 
-        context.Circles.Add(circle);
-
-        await context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
     }
 
     public async Task<List<CircleEntity>> GetAllAsync()
     {
-        var context = new TravelAcrossUkraineContext();
-
-        return await context.Circles
+        return await _context.Circles
             .Include(circle => circle.CenterGeoPoint)
             .ToListAsync();
     }
 
     public async Task<CircleEntity> GetByIdAsync(Guid id)
     {
-        var context = new TravelAcrossUkraineContext();
-
-        return await context.Circles
+        return await _context.Circles
             .Where(circle => circle.Id.Equals(id))
             .Include(circle => circle.CenterGeoPoint)
             .FirstOrDefaultAsync();
@@ -44,10 +45,8 @@ public class CircleRepository : ICircleRepository
 
     public async Task DeleteAsync(CircleEntity circle)
     {
-        var context = new TravelAcrossUkraineContext();
+        _context.Entry(circle).State = EntityState.Deleted;
 
-        context.Entry(circle).State = EntityState.Deleted;
-
-        await context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
     }
 }

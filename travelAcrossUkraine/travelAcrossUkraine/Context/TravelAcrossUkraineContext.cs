@@ -6,17 +6,10 @@ namespace TravelAcrossUkraine.WebApi.Context;
 
 public class TravelAcrossUkraineContext : DbContext
 {
-    public TravelAcrossUkraineContext() : base()
-    {
+    public TravelAcrossUkraineContext(DbContextOptions<TravelAcrossUkraineContext> options)
+        : base(options)
+    { }
 
-    }
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        if (!optionsBuilder.IsConfigured)
-        {
-            optionsBuilder.UseSqlServer(@"Data Source=.;Initial Catalog=TravelDatabase;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
-        }
-    }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<GeoPointEntity>(entity =>
@@ -38,6 +31,8 @@ public class TravelAcrossUkraineContext : DbContext
         modelBuilder.Entity<CategoryEntity>().HasQueryFilter(ent => !ent.IsDeleted);
         modelBuilder.Entity<ImageEntity>().HasQueryFilter(ent => !ent.IsDeleted);
         modelBuilder.Entity<LocationEntity>().HasQueryFilter(ent => !ent.IsDeleted);
+        modelBuilder.Entity<UserEntity>().HasQueryFilter(ent => !ent.IsDeleted);
+        modelBuilder.Entity<RoleEntity>().HasQueryFilter(ent => !ent.IsDeleted);
     }
 
     public DbSet<GeoPointEntity> GeoPoints { get; set; }
@@ -47,8 +42,8 @@ public class TravelAcrossUkraineContext : DbContext
     public DbSet<CategoryEntity> Categories { get; set; }
     public DbSet<ImageEntity> Images { get; set; }
     public DbSet<LocationEntity> Locations { get; set; }
-
-
+    public DbSet<UserEntity> Users { get; set; }
+    public DbSet<RoleEntity> Roles { get; set; }
 
     public async new Task<int> SaveChangesAsync(CancellationToken cancellationToken)
     {
@@ -79,77 +74,3 @@ public class TravelAcrossUkraineContext : DbContext
         }
     }
 }
-
-
-
-//[
-//    {
-//        "id": "1675192786417",
-//        "type": "Point",
-//        "geometries": [
-//            2790819.1192107527,
-//            6994940.20348488
-//        ]
-//    },
-//    {
-//    "id": "1675192959972",
-//        "type": "Circle",
-//        "geometries": {
-//        "center": [
-//                2081483.496724317,
-//                6833505.199746588
-//            ],
-//            "radius": 243028.01847738423
-//        }
-//},
-//    {
-//    "id": "1675192978122",
-//        "type": "LineString",
-//        "geometries": [
-//            [
-//                2130403.1948268297,
-//                6085033.818778142
-//            ],
-//            [
-//                2673411.843764722,
-//                6310064.430049701
-//            ],
-//            [
-//                2673411.843764722,
-//                6094817.758398645
-//            ],
-//            [
-//                2918010.334277286,
-//                6261144.731947188
-//            ]
-//        ]
-//    },
-//    {
-//    "id": "1675192987434",
-//        "type": "Polygon",
-//        "geometries": [
-//            [
-//                [
-//                    2570680.477749445,
-//                    7577084.610904782
-//                ],
-//                [
-//                    2976713.9720003013,
-//                    7635788.248627798
-//                ],
-//                [
-//                    2976713.9720003013,
-//                    7435217.486407495
-//                ],
-//                [
-//                    2683195.7833852246,
-//                    7396081.727925485
-//                ],
-//                [
-//                    2570680.477749445,
-//                    7577084.610904782
-//                ]
-//            ]
-//        ]
-//    }
-//]

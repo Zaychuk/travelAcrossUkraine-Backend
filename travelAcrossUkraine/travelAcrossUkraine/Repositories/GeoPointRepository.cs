@@ -14,37 +14,37 @@ public interface IGeoPointRepository
 
 public class GeoPointRepository : IGeoPointRepository
 {
+    private readonly TravelAcrossUkraineContext _context;
+
+    public GeoPointRepository(TravelAcrossUkraineContext context)
+    {
+        _context = context;
+    }
+
     public async Task CreateAsync(GeoPointEntity geoPoint)
     {
-        using var context = new TravelAcrossUkraineContext();
+        _context.Entry(geoPoint).State = EntityState.Added;
 
-        context.Entry(geoPoint).State = EntityState.Added;
-
-        await context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
     }
 
     public async Task<List<GeoPointEntity>> GetAllAsync()
     {
-        using var context = new TravelAcrossUkraineContext();
-
-        return await context.GeoPoints
+        return await _context.GeoPoints
             .ToListAsync();
     }
 
     public async Task<GeoPointEntity> GetByIdAsync(Guid id)
     {
-        using var context = new TravelAcrossUkraineContext();
-        return await context.GeoPoints
+        return await _context.GeoPoints
             .Where(geoPoint => geoPoint.Id.Equals(id))
             .FirstOrDefaultAsync();
     }
 
     public async Task DeleteAsync(GeoPointEntity geoPoint)
     {
-        var context = new TravelAcrossUkraineContext();
+        _context.Entry(geoPoint).State = EntityState.Deleted;
 
-        context.Entry(geoPoint).State = EntityState.Deleted;
-
-        await context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
     }
 }

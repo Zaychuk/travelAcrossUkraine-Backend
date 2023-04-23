@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TravelAcrossUkraine.WebApi.Dtos;
 using TravelAcrossUkraine.WebApi.Services;
 using TravelAcrossUkraine.WebApi.Utility;
@@ -8,6 +9,7 @@ namespace TravelAcrossUkraine.WebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class TypesController : ControllerBase
 {
     private readonly ITypeService _typeService;
@@ -46,6 +48,7 @@ public class TypesController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<Guid>> CreateAsync(CreateTypeDto type)
     {
         try
@@ -61,6 +64,7 @@ public class TypesController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<TypeDto>> DeleteAsync(Guid id)
     {
         try

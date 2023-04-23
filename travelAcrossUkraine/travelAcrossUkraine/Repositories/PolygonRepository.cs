@@ -14,29 +14,31 @@ public interface IPolygonRepository
 
 public class PolygonRepository : IPolygonRepository
 {
+    private readonly TravelAcrossUkraineContext _context;
+
+    public PolygonRepository(TravelAcrossUkraineContext context)
+    {
+        _context = context;
+    }
+
+
     public async Task CreateAsync(PolygonEntity polygon)
     {
-        using var context = new TravelAcrossUkraineContext();
+        _context.Add(polygon);
 
-        context.Add(polygon);
-
-        await context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
     }
 
     public async Task<List<PolygonEntity>> GetAllAsync()
     {
-        using var context = new TravelAcrossUkraineContext();
-
-        return await context.Polygons
+       return await _context.Polygons
             .Include(polygon => polygon.GeoPoints)
             .ToListAsync();
     }
 
     public async Task<PolygonEntity> GetByIdAsync(Guid id)
     {
-        using var context = new TravelAcrossUkraineContext();
-
-        return await context.Polygons
+        return await _context.Polygons
             .Where(polygon => polygon.Id.Equals(id))
             .Include(polygon => polygon.GeoPoints)
             .FirstOrDefaultAsync();
@@ -44,11 +46,9 @@ public class PolygonRepository : IPolygonRepository
 
     public async Task DeleteAsync(PolygonEntity polygon)
     {
-        var context = new TravelAcrossUkraineContext();
+        _context.Entry(polygon).State = EntityState.Deleted;
 
-        context.Entry(polygon).State = EntityState.Deleted;
-
-        await context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
     }
 
 }

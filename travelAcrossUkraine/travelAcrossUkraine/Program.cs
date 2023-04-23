@@ -1,13 +1,36 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using TravelAcrossUkraine.WebApi.Context;
 using TravelAcrossUkraine.WebApi.Mappings;
 using TravelAcrossUkraine.WebApi.Repositories;
 using TravelAcrossUkraine.WebApi.Services;
+using TravelAcrossUkraine.WebApi.Services.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 var services = builder.Services;
+
+services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        };
+    });
+
+services.AddDbContext<TravelAcrossUkraineContext>(o => o.UseSqlServer(builder.Configuration["DataBaseConnection:ConnectionString"]));
+
 services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 services.AddEndpointsApiExplorer();
@@ -28,20 +51,23 @@ IMapper mapper = mapperConfig.CreateMapper();
 services.AddSingleton(mapper);
 
 // Sevices
-services.AddSingleton<IGeoPointService, GeoPointService>();
-services.AddSingleton<IPolygonService, PolygonService>();
-services.AddSingleton<ICircleService, CircleService>();
-services.AddSingleton<ITypeService, TypeService>();
-services.AddSingleton<ICategoryService, CategoryService>();
-services.AddSingleton<ILocationService, LocationService>();
+services.AddScoped<IGeoPointService, GeoPointService>();
+services.AddScoped<IPolygonService, PolygonService>();
+services.AddScoped<ICircleService, CircleService>();
+services.AddScoped<ITypeService, TypeService>();
+services.AddScoped<ICategoryService, CategoryService>();
+services.AddScoped<ILocationService, LocationService>();
+services.AddScoped<IAuthService, AuthService>();
 
 // Repositories
-services.AddSingleton<IGeoPointRepository, GeoPointRepository>();
-services.AddSingleton<IPolygonRepository, PolygonRepository>();
-services.AddSingleton<ICircleRepository, CircleRepository>();
-services.AddSingleton<ITypeRepository, TypeRepository>();
-services.AddSingleton<ICategoryRepository, CategoryRepository>();
-services.AddSingleton<ILocationRepository, LocationRepository>();
+services.AddScoped<IGeoPointRepository, GeoPointRepository>();
+services.AddScoped<IPolygonRepository, PolygonRepository>();
+services.AddScoped<ICircleRepository, CircleRepository>();
+services.AddScoped<ITypeRepository, TypeRepository>();
+services.AddScoped<ICategoryRepository, CategoryRepository>();
+services.AddScoped<ILocationRepository, LocationRepository>();
+services.AddScoped<IUserRepository, UserRepository>();
+services.AddScoped<IRoleRepository, RoleRepository>();
 
 
 var app = builder.Build();
@@ -57,6 +83,7 @@ app.UseHttpsRedirection();
 
 app.UseCors();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

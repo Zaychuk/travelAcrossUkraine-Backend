@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TravelAcrossUkraine.WebApi.Dtos;
 using TravelAcrossUkraine.WebApi.Services;
 using TravelAcrossUkraine.WebApi.Utility;
@@ -8,6 +9,7 @@ namespace TravelAcrossUkraine.WebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class LocationsController : ControllerBase
 {
     private readonly ILocationService _locationService;
@@ -46,6 +48,7 @@ public class LocationsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<Guid>> CreateAsync([FromForm] CreateLocationDto location)
     {
         try
@@ -61,6 +64,7 @@ public class LocationsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<Guid>> CreateAsync(Guid id)
     {
         try

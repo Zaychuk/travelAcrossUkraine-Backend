@@ -14,27 +14,31 @@ public interface ITypeRepository
 
 public class TypeRepository : ITypeRepository
 {
+    private readonly TravelAcrossUkraineContext _context;
+
+    public TypeRepository(TravelAcrossUkraineContext context)
+    {
+        _context = context;
+    }
+
+
     public async Task CreateAsync(TypeEntity type)
     {
-        var context = new TravelAcrossUkraineContext();
+        _context.Add(type);
 
-        context.Add(type);
-
-        await context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
     }
 
     public async Task<List<TypeEntity>> GetAllAsync()
     {
-        var context = new TravelAcrossUkraineContext();
-        return await context.Types
+        return await _context.Types
             .Include(type => type.Categories)
             .ToListAsync();
     }
 
     public async Task<TypeEntity> GetByIdAsync(Guid id)
     {
-        var context = new TravelAcrossUkraineContext();
-        return await context.Types
+        return await _context.Types
             .Where(type => type.Id.Equals(id))
             .Include(type => type.Categories)
             .FirstOrDefaultAsync();
@@ -42,10 +46,8 @@ public class TypeRepository : ITypeRepository
 
     public async Task DeleteAsync(TypeEntity type)
     {
-        var context = new TravelAcrossUkraineContext();
+        _context.Entry(type).State = EntityState.Deleted;
 
-        context.Entry(type).State = EntityState.Deleted;
-
-        await context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
     }
 }

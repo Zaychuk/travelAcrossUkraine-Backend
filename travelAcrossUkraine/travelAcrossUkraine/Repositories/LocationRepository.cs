@@ -14,20 +14,24 @@ public interface ILocationRepository
 
 public class LocationRepository : ILocationRepository
 {
+    private readonly TravelAcrossUkraineContext _context;
+
+    public LocationRepository(TravelAcrossUkraineContext context)
+    {
+        _context = context;
+    }
+
+
     public async Task CreateAsync(LocationEntity location)
     {
-        using var context = new TravelAcrossUkraineContext();
+        _context.Locations.Add(location);
 
-        context.Locations.Add(location);
-
-        await context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
     }
 
     public async Task<List<LocationEntity>> GetAllAsync()
     {
-        using var context = new TravelAcrossUkraineContext();
-
-        return await context.Locations
+        return await _context.Locations
             .Include(location => location.Images)
             .Include(location => location.Category).ThenInclude(category => category.Type)
             .Include(location => location.GeoPoint)
@@ -38,9 +42,7 @@ public class LocationRepository : ILocationRepository
 
     public async Task<LocationEntity> GetByIdAsync(Guid id)
     {
-        using var context = new TravelAcrossUkraineContext();
-
-        return await context.Locations
+        return await _context.Locations
             .Where(polygon => polygon.Id.Equals(id))
             .Include(location => location.Images)
             .Include(location => location.Category).ThenInclude(category => category.Type)
@@ -52,10 +54,8 @@ public class LocationRepository : ILocationRepository
 
     public async Task DeleteAsync(LocationEntity location)
     {
-        var context = new TravelAcrossUkraineContext();
+        _context.Entry(location).State = EntityState.Deleted;
 
-        context.Entry(location).State = EntityState.Deleted;
-
-        await context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
     }
 }

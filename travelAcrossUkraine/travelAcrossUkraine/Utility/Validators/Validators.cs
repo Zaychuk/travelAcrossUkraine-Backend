@@ -1,4 +1,7 @@
-﻿using TravelAcrossUkraine.WebApi.Dtos;
+﻿using Microsoft.VisualBasic;
+using TravelAcrossUkraine.WebApi.Dtos;
+using TravelAcrossUkraine.WebApi.Dtos.Auth;
+using TravelAcrossUkraine.WebApi.Helpers;
 
 namespace TravelAcrossUkraine.WebApi.Utility.Validators;
 
@@ -62,6 +65,29 @@ public static class Validators
             || (createLocationDto.GeoPoint == null && createLocationDto.Polygon == null && createLocationDto.Circle == null))
         {
             throw new BadHttpRequestException($"{nameof(CreateLocationDto)}: {ErrorMessages.NotAllRequiredDataProvided}");
+        }
+    }
+
+    public static void ValidateCreateUserDto(CreateUserDto createUserDto)
+    {
+        if (createUserDto == null
+            || string.IsNullOrWhiteSpace(createUserDto.Username)
+            || createUserDto.Username.Length > Constants.MaxUsernameLength
+            || string.IsNullOrWhiteSpace(createUserDto.Password)
+            || string.IsNullOrWhiteSpace(createUserDto.EmailAdress)
+            || !EmailHelper.IsValid(createUserDto.EmailAdress))
+        {
+            throw new BadHttpRequestException($"{nameof(CreateUserDto)}: {ErrorMessages.NotAllRequiredDataProvided}");
+        }
+    }
+
+    public static void ValidateUserLoginDto(UserLoginDto userLogin)
+    {
+        if (userLogin == null
+            || string.IsNullOrWhiteSpace(userLogin.Username)
+            || string.IsNullOrWhiteSpace(userLogin.Password))
+        {
+            throw new BadHttpRequestException($"{nameof(UserLoginDto)}: {ErrorMessages.NotAllRequiredDataProvided}");
         }
     }
 }

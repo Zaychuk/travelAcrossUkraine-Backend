@@ -23,7 +23,8 @@ public class MappingProfile : Profile
         //CreateMap<ImageEntity, ImageWithoutLocationDto>().ReverseMap();
 
         // Location
-        CreateMap<LocationEntity, LocationDto>().ForMember(x => x.Images, opt => opt.Ignore()).ReverseMap();
+        CreateMap<LocationEntity, LocationDto>()
+            .ForMember(x => x.Images, opt => opt.Ignore()).ReverseMap();
         CreateMap<LocationEntity, CreateLocationDto>().ReverseMap();
 
         // Polygon
@@ -34,6 +35,11 @@ public class MappingProfile : Profile
         CreateMap<TypeEntity, TypeDto>().ReverseMap();
         CreateMap<TypeEntity, TypeWithoutCategoryDto>().ReverseMap();
 
-
+        // User
+        CreateMap<CreateUserDto, UserEntity>()
+            .ForMember(x => x.PasswordHash, opt => opt.Ignore())
+            .ForMember(x => x.RoleId, opt => opt.Ignore())
+            .ForMember(x => x.Role, opt => opt.Ignore());
+        CreateMap<UserEntity, UserDto>().ReverseMap();
     }
 }

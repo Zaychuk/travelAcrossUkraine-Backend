@@ -55,7 +55,7 @@ public class AuthService : IAuthService
         var claims = new[]
         {
             new Claim(ClaimTypes.NameIdentifier, user.Username),
-            new Claim(ClaimTypes.Email, user.EmailAdress),
+            new Claim(ClaimTypes.Email, user.EmailAddress),
             new Claim(ClaimTypes.GivenName, user.GivenName),
             new Claim(ClaimTypes.Surname, user.Surname),
             new Claim(ClaimTypes.Role, user.Role.Name),

@@ -74,8 +74,8 @@ public static class Validators
             || string.IsNullOrWhiteSpace(createUserDto.Username)
             || createUserDto.Username.Length > Constants.MaxUsernameLength
             || string.IsNullOrWhiteSpace(createUserDto.Password)
-            || string.IsNullOrWhiteSpace(createUserDto.EmailAdress)
-            || !EmailHelper.IsValid(createUserDto.EmailAdress))
+            || string.IsNullOrWhiteSpace(createUserDto.EmailAddress)
+            || !EmailHelper.IsValid(createUserDto.EmailAddress))
         {
             throw new BadHttpRequestException($"{nameof(CreateUserDto)}: {ErrorMessages.NotAllRequiredDataProvided}");
         }

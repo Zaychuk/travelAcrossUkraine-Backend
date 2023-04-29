@@ -4,8 +4,8 @@ namespace TravelAcrossUkraine.WebApi.Helpers;
 
 public static class EmailHelper
 {
-    public static bool IsValid(string emailaddress)
+    public static bool IsValid(string emailAddress)
     {
-        return MailAddress.TryCreate(emailaddress, out _);
+        return MailAddress.TryCreate(emailAddress, out _);
     }
 }

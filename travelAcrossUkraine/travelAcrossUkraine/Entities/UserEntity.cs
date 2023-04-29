@@ -6,7 +6,7 @@ public class UserEntity :BaseEntity
 {
     public string Username { get; set; }
     public string PasswordHash { get; set; }
-    public string EmailAdress { get; set; }
+    public string EmailAddress { get; set; }
     public string Surname { get; set; }
     public string GivenName { get; set; }
     public RoleEntity Role { get; set; }

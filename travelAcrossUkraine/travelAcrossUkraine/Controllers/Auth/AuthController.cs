@@ -39,7 +39,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("signUp")]
-    public async Task<ActionResult<string>> SignUpAsync([FromBody] CreateUserDto userDto)
+    public async Task<ActionResult> SignUpAsync([FromBody] CreateUserDto userDto)
     {
         try
         {

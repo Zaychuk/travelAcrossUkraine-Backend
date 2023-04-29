@@ -30,7 +30,7 @@ public class AuthController : ControllerBase
         {
             Validators.ValidateUserLoginDto(userLogin);
 
-            return Ok(await _authService.AuthenticateAsync(userLogin));
+            return await _authService.AuthenticateAsync(userLogin);
         }
         catch (Exception ex)
         {

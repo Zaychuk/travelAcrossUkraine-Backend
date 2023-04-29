@@ -30,7 +30,7 @@ public class AuthController : ControllerBase
         {
             Validators.ValidateUserLoginDto(userLogin);
 
-            return await _authService.AuthenticateAsync(userLogin);
+            return Ok(await _authService.AuthenticateAsync(userLogin));
         }
         catch (Exception ex)
         {
@@ -39,7 +39,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("signUp")]
-    public async Task<ActionResult<string>> SignUpAsync([FromBody] CreateUserDto userDto)
+    public async Task<ActionResult> SignUpAsync([FromBody] CreateUserDto userDto)
     {
         try
         {

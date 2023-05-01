@@ -17,7 +17,7 @@ public static class Validators
         }
     }
 
-    public static void ValidateCircleDto(CircleDto circleDto)
+    public static void ValidateCircleDto(CreateCircleDto circleDto)
     {
         if (circleDto == null
             || circleDto.Radius <= 0
@@ -27,7 +27,7 @@ public static class Validators
         }
     }
 
-    public static void ValidatePolygonDto(PolygonDto polygonDto)
+    public static void ValidatePolygonDto(CreatePolygonDto polygonDto)
     {
         if (polygonDto == null
             || polygonDto.GeoPoints == null
@@ -37,7 +37,7 @@ public static class Validators
         }
     }
 
-    public static void ValidateGeoPointDto(GeoPointDto geoPointDto)
+    public static void ValidateGeoPointDto(CreateGeoPointDto geoPointDto)
     {
         if (geoPointDto == null)
         {

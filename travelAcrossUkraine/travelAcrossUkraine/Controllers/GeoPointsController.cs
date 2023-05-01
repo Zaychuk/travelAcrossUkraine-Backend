@@ -60,7 +60,7 @@ public class GeoPointsController : ControllerBase
 
     [HttpPost]
     [Authorize(Roles = "Admin")]
-    public async Task<ActionResult<Guid>> CreateAsync(GeoPointDto geoPoint)
+    public async Task<ActionResult<Guid>> CreateAsync(CreateGeoPointDto geoPoint)
     {
         try
         {

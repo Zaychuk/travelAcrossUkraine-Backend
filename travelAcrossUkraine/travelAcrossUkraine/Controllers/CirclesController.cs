@@ -49,7 +49,7 @@ public class CirclesController : ControllerBase
 
     [HttpPost]
     [Authorize(Roles = "Admin")]
-    public async Task<ActionResult<Guid>> CreateAsync(CircleDto circle)
+    public async Task<ActionResult<Guid>> CreateAsync(CreateCircleDto circle)
     {
         try
         {

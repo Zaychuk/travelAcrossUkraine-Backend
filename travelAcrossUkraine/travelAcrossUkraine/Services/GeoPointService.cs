@@ -10,7 +10,7 @@ namespace TravelAcrossUkraine.WebApi.Services;
 public interface IGeoPointService
 {
     Task<List<GeoPointDto>> GetAllAsync();
-    Task<Guid> CreateAsync(GeoPointDto geoPoint);
+    Task<Guid> CreateAsync(CreateGeoPointDto geoPoint);
     Task<GeoPointDto> GetByIdAsync(Guid id);
     Task DeleteAsync(Guid id);
 }
@@ -26,7 +26,7 @@ public class GeoPointService : IGeoPointService
         _mapper = mapper;
     }
 
-    public async Task<Guid> CreateAsync(GeoPointDto geoPointDto)
+    public async Task<Guid> CreateAsync(CreateGeoPointDto geoPointDto)
     {
         var geoPoint = _mapper.Map<GeoPointEntity>(geoPointDto);
         BaseEntityHelper.SetBaseProperties(geoPoint);

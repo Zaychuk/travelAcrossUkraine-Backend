@@ -11,7 +11,7 @@ public interface IPolygonService
 {
     Task<List<PolygonDto>> GetAllAsync();
     Task<PolygonDto> GetByIdAsync(Guid polygonId);
-    Task<Guid> CreateAsync(PolygonDto polygon);
+    Task<Guid> CreateAsync(CreatePolygonDto polygon);
     Task DeleteAsync(Guid polygonId);
 }
 public class PolygonService : IPolygonService
@@ -25,7 +25,7 @@ public class PolygonService : IPolygonService
         _mapper = mapper;
     }
 
-    public async Task<Guid> CreateAsync(PolygonDto polygonDto)
+    public async Task<Guid> CreateAsync(CreatePolygonDto polygonDto)
     {
         var polygon = _mapper.Map<PolygonEntity>(polygonDto);
         BaseEntityHelper.SetBaseProperties(polygon);

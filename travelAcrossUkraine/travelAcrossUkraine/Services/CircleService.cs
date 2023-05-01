@@ -11,7 +11,7 @@ public interface ICircleService
 {
     Task<List<CircleDto>> GetAllAsync();
     Task<CircleDto> GetByIdAsync(Guid id);
-    Task<Guid> CreateAsync(CircleDto circle);
+    Task<Guid> CreateAsync(CreateCircleDto circle);
     Task DeleteAsync(Guid id);
 }
 
@@ -26,7 +26,7 @@ public class CircleService : ICircleService
         _mapper = mapper;
     }
 
-    public async Task<Guid> CreateAsync(CircleDto circleDto)
+    public async Task<Guid> CreateAsync(CreateCircleDto circleDto)
     {
         var circle = _mapper.Map<CircleEntity>(circleDto);
 

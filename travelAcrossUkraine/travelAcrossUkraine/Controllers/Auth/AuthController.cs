@@ -64,7 +64,7 @@ public class AuthController : ControllerBase
 
         return new UserDto
         {
-            EmailAdress = userClaims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value,
+            EmailAddress = userClaims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value,
             GivenName = userClaims.FirstOrDefault(c => c.Type == ClaimTypes.GivenName)?.Value,
             Surname = userClaims.FirstOrDefault(c => c.Type == ClaimTypes.Surname)?.Value,
             Role = userClaims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value,

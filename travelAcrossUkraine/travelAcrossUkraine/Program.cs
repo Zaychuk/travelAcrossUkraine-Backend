@@ -1,10 +1,10 @@
-using AutoMapper;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using TravelAcrossUkraine.WebApi.Context;
-using TravelAcrossUkraine.WebApi.Mappings;
+using TravelAcrossUkraine.WebApi.Mappers;
 using TravelAcrossUkraine.WebApi.Repositories;
 using TravelAcrossUkraine.WebApi.Services;
 using TravelAcrossUkraine.WebApi.Services.Auth;
@@ -37,18 +37,12 @@ services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
 
 // AutoMapper
-var mapperConfig = new MapperConfiguration(mc =>
-{
-    mc.AddProfile(new MappingProfile());
-});
+services.AddSingleton(serviceColl => new AutoMapperConfigure().GetMapper());
 
 builder.Services.AddCors(policyBuilder =>
     policyBuilder.AddDefaultPolicy(policy =>
         policy.WithOrigins("*").AllowAnyMethod().AllowAnyHeader())
 );
-
-IMapper mapper = mapperConfig.CreateMapper();
-services.AddSingleton(mapper);
 
 // Sevices
 services.AddScoped<IGeoPointService, GeoPointService>();

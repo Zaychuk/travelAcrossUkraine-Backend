@@ -49,7 +49,7 @@ public class PolygonsController : ControllerBase
 
     [HttpPost]
     [Authorize(Roles = "Admin")]
-    public async Task<ActionResult<Guid>> CreateAsync(PolygonDto polygon)
+    public async Task<ActionResult<Guid>> CreateAsync(CreatePolygonDto polygon)
     {
         try
         {

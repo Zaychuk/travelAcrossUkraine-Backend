@@ -11,4 +11,5 @@ public class UserEntity :BaseEntity
     public string GivenName { get; set; }
     public RoleEntity Role { get; set; }
     public Guid RoleId { get; set; }
+    public List<CollectionEntity> Collections { get; set; }
 }

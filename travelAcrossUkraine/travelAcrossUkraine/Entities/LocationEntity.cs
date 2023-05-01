@@ -17,4 +17,5 @@ public class LocationEntity : BaseEntity
     public Guid? GeoPointId { get; set; }
     public CircleEntity? Circle { get; set; }
     public Guid? CircleId { get; set; }
+    public List<CollectionLocationEntity> CollectionLocations { get; set; }
 }

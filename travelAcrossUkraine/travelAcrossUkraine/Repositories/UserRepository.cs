@@ -8,6 +8,7 @@ public interface IUserRepository
 {
     Task<UserEntity> GetAsync(string username, string passwordHash);
     Task CreateAsync(UserEntity user);
+    Task<UserEntity> GetAsync(string username);
 }
 
 public class UserRepository : IUserRepository
@@ -30,5 +31,13 @@ public class UserRepository : IUserRepository
         return await _context.Users
             .Include(user => user.Role)
             .FirstOrDefaultAsync(user => user.Username.ToLower() == username.ToLower() && user.PasswordHash == passwordHash);
+    }
+
+    public async Task<UserEntity> GetAsync(string username)
+    {
+        return await _context.Users
+            .Include(user => user.Role)
+            .Include(user => user.Collections)
+            .FirstOrDefaultAsync(user => user.Username.ToLower() == username.ToLower());
     }
 }

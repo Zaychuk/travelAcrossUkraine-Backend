@@ -38,7 +38,7 @@ public class AuthService : IAuthService
     {
         var userEntity = _mapper.Map<UserEntity>(userDto);
         userEntity.PasswordHash = HashHelper.HashString(userDto.Password);
-        userEntity.RoleId = (await _roleRepository.GetAsync(RoleNames.Admin)).Id;
+        userEntity.RoleId = (await _roleRepository.GetAsync(RoleNames.User)).Id;
         BaseEntityHelper.SetBaseProperties(userEntity);
 
         await _userRepository.CreateAsync(userEntity);

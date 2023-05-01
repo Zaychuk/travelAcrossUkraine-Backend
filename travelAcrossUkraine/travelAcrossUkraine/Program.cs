@@ -68,6 +68,8 @@ services.AddScoped<ICategoryRepository, CategoryRepository>();
 services.AddScoped<ILocationRepository, LocationRepository>();
 services.AddScoped<IUserRepository, UserRepository>();
 services.AddScoped<IRoleRepository, RoleRepository>();
+services.AddScoped<ICollectionRepository, CollectionRepository>();
+
 
 
 var app = builder.Build();

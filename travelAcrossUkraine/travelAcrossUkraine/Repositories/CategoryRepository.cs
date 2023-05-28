@@ -10,6 +10,7 @@ public interface ICategoryRepository
     Task<CategoryEntity> GetByIdAsync(Guid id);
     Task CreateAsync(CategoryEntity category);
     Task DeleteAsync(CategoryEntity category);
+    Task UpdateAsync(CategoryEntity category);
 }
 
 public class CategoryRepository : ICategoryRepository
@@ -44,9 +45,18 @@ public class CategoryRepository : ICategoryRepository
     }
 
 
+    public async Task UpdateAsync(CategoryEntity category)
+    {
+        _context.Categories.Update(category);
+
+        await _context.SaveChangesAsync();
+    }
+
+
     public async Task DeleteAsync(CategoryEntity category)
     {
-        _context.Entry(category).State = EntityState.Deleted;
+        category.IsDeleted = true;
+        _context.Entry(category).State = EntityState.Modified;
 
         await _context.SaveChangesAsync();
     }

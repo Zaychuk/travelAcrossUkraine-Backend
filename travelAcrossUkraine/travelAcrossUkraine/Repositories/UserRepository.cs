@@ -9,6 +9,9 @@ public interface IUserRepository
     Task<UserEntity> GetAsync(string username, string passwordHash);
     Task CreateAsync(UserEntity user);
     Task<UserEntity> GetAsync(string username);
+    Task<List<UserEntity>> GetAllAsync();
+    Task<UserEntity> GetByIdAsync(Guid id);
+    Task DeleteAsync(UserEntity user);
 }
 
 public class UserRepository : IUserRepository
@@ -24,6 +27,26 @@ public class UserRepository : IUserRepository
     {
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
+    }
+
+    public async Task DeleteAsync(UserEntity user)
+    {
+        user.IsDeleted = true;
+        _context.Users.Remove(user);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<List<UserEntity>> GetAllAsync()
+    {
+        return await _context.Users
+            .Include(user => user.Role)
+            .ToListAsync();
+    }
+
+    public async Task<UserEntity> GetByIdAsync(Guid id)
+    {
+        return await _context.Users
+            .FirstOrDefaultAsync(user => user.Id == id);
     }
 
     public async Task<UserEntity> GetAsync(string username, string passwordHash)

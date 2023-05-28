@@ -1,7 +1,10 @@
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
 using TravelAcrossUkraine.WebApi.Context;
 using TravelAcrossUkraine.WebApi.Mappers;
@@ -39,10 +42,19 @@ services.AddSwaggerGen();
 // AutoMapper
 services.AddSingleton(serviceColl => new AutoMapperConfigure().GetMapper());
 
-builder.Services.AddCors(policyBuilder =>
-    policyBuilder.AddDefaultPolicy(policy =>
-        policy.WithOrigins("*").AllowAnyMethod().AllowAnyHeader())
-);
+void ConfigurePolicy(CorsPolicyBuilder builder) =>
+
+    builder
+        .AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowAnyHeader();
+
+
+services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", ConfigurePolicy);
+});
+
 
 // Sevices
 services.AddScoped<IGeoPointService, GeoPointService>();
@@ -52,6 +64,7 @@ services.AddScoped<ITypeService, TypeService>();
 services.AddScoped<ICategoryService, CategoryService>();
 services.AddScoped<ILocationService, LocationService>();
 services.AddScoped<IAuthService, AuthService>();
+services.AddScoped<IUserService, UserService>();
 
 // Repositories
 services.AddScoped<IGeoPointRepository, GeoPointRepository>();
@@ -63,6 +76,7 @@ services.AddScoped<ILocationRepository, LocationRepository>();
 services.AddScoped<IUserRepository, UserRepository>();
 services.AddScoped<IRoleRepository, RoleRepository>();
 services.AddScoped<ICollectionRepository, CollectionRepository>();
+services.AddScoped<IImageRepository, ImageRepository>();
 
 
 
@@ -77,7 +91,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseCors();
+app.UseCors("CorsPolicy");
 
 app.UseAuthentication();
 app.UseAuthorization();

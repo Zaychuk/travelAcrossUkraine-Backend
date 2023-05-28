@@ -8,10 +8,10 @@ public class LocationProfile : Profile
 {
     public LocationProfile()
     {
-        CreateMap<LocationEntity, LocationDto>()
-            .ForMember(x => x.Images, opt => opt.Ignore());
+        CreateMap<LocationEntity, LocationDto>();
 
         CreateMap<CreateLocationDto, LocationEntity>()
+            .ForMember(ent => ent.Status, opt => opt.Ignore())
             .ForMember(ent => ent.Images, opt => opt.Ignore())
             .ForMember(ent => ent.Category, opt => opt.Ignore())
             .ForMember(ent => ent.PolygonId, opt => opt.Ignore())

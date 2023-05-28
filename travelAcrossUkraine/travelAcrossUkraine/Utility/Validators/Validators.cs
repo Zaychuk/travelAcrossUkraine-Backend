@@ -57,8 +57,8 @@ public static class Validators
     public static void ValidateCreateLocationDto(CreateLocationDto createLocationDto)
     {
         if (createLocationDto == null
-            || createLocationDto.ImageFiles == null
-            || !createLocationDto.ImageFiles.Any()
+            || createLocationDto.ImageUrls == null
+            || !createLocationDto.ImageUrls.Any()
             || createLocationDto.CategoryId == Guid.Empty
             || string.IsNullOrWhiteSpace(createLocationDto.Description)
             || string.IsNullOrWhiteSpace(createLocationDto.Name)

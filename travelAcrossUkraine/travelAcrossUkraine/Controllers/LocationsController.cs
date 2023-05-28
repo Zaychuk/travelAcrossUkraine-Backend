@@ -21,12 +21,39 @@ public class LocationsController : ControllerBase
         _logger = logger;
     }
 
+    [HttpPost("inGivenArea")]
+    public async Task<ActionResult<List<LocationDto>>> GetAllInGivenArea(PolygonDto areaPolygon)
+    {
+        try
+        {
+            return await _locationService.GetAllInGivenArea(areaPolygon);
+        }
+        catch (Exception ex)
+        {
+            return ExceptionHandler.Handle(ex, _logger);
+        }
+    }
+
     [HttpGet]
     public async Task<ActionResult<List<LocationDto>>> GetAllAsync()
     {
         try
         {
             return await _locationService.GetAllAsync();
+        }
+        catch (Exception ex)
+        {
+            return ExceptionHandler.Handle(ex, _logger);
+        }
+    }
+
+    [HttpGet("pending")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<List<LocationDto>>> GetAllPendingAsync()
+    {
+        try
+        {
+            return await _locationService.GetAllPendingAsync();
         }
         catch (Exception ex)
         {
@@ -48,7 +75,6 @@ public class LocationsController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<Guid>> CreateAsync([FromForm] CreateLocationDto location)
     {
         try
@@ -63,9 +89,40 @@ public class LocationsController : ControllerBase
         }
     }
 
+    [HttpPut("{id}/approve")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult> ApproveAsync(Guid id)
+    {
+        try
+        {
+            await _locationService.ApproveAsync(id);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return ExceptionHandler.Handle(ex, _logger);
+        }
+    }
+
+    [HttpPut("{id}/decline")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult> DeclineAsync(Guid id)
+    {
+        try
+        {
+            await _locationService.DeclineAsync(id);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return ExceptionHandler.Handle(ex, _logger);
+        }
+    }
+
+
     [HttpDelete("{id}")]
     [Authorize(Roles = "Admin")]
-    public async Task<ActionResult<Guid>> CreateAsync(Guid id)
+    public async Task<ActionResult> DeleteAsync(Guid id)
     {
         try
         {

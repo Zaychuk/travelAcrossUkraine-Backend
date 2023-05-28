@@ -31,7 +31,9 @@ public class AutoMapperConfigure
         // Register profiles
         cfg.AddProfile(new CategoryProfile());
         cfg.AddProfile(new CircleProfile());
+        cfg.AddProfile(new CollectionProfile());
         cfg.AddProfile(new GeoPointProfile());
+        cfg.AddProfile(new ImageProfile());
         cfg.AddProfile(new LocationProfile());
         cfg.AddProfile(new PolygonProfile());
         cfg.AddProfile(new TypeProfile());

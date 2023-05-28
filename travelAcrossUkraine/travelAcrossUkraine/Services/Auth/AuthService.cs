@@ -15,7 +15,7 @@ namespace TravelAcrossUkraine.WebApi.Services.Auth;
 
 public interface IAuthService
 {
-    Task<string> AuthenticateAsync(UserLoginDto userLogin);
+    Task<LoginResponseDto> AuthenticateAsync(UserLoginDto userLogin);
     Task SignUpAsync(CreateUserDto userDto);
 }
 
@@ -44,7 +44,7 @@ public class AuthService : IAuthService
         await _userRepository.CreateAsync(userEntity);
     }
 
-    public async Task<string> AuthenticateAsync(UserLoginDto userLogin)
+    public async Task<LoginResponseDto> AuthenticateAsync(UserLoginDto userLogin)
     {
         var passwordHash = HashHelper.HashString(userLogin.Password);
         var user = await _userRepository.GetAsync(userLogin.Username, passwordHash) ?? throw new ForbiddenException();
@@ -54,7 +54,8 @@ public class AuthService : IAuthService
 
         var claims = new[]
         {
-            new Claim(ClaimTypes.NameIdentifier, user.Username),
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Name, user.Username),
             new Claim(ClaimTypes.Email, user.EmailAddress),
             new Claim(ClaimTypes.GivenName, user.GivenName),
             new Claim(ClaimTypes.Surname, user.Surname),
@@ -69,6 +70,14 @@ public class AuthService : IAuthService
             signingCredentials: credentials
         );
 
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        return new LoginResponseDto
+        {
+            GivenName = user.GivenName,
+            EmailAddress = user.EmailAddress,
+            Surname = user.Surname,
+            Role = user.Role.Name,
+            Token = new JwtSecurityTokenHandler().WriteToken(token),
+            Username = user.Username
+        };
     }
 }

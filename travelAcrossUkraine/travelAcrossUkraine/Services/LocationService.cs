@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using System.Linq.Expressions;
 using TravelAcrossUkraine.WebApi.Dtos;
 using TravelAcrossUkraine.WebApi.Entities;
 using TravelAcrossUkraine.WebApi.Exceptions;
@@ -10,7 +11,7 @@ namespace TravelAcrossUkraine.WebApi.Services;
 
 public interface ILocationService
 {
-    Task<List<LocationDto>> GetAllInGivenArea(PolygonDto areaPolygon);
+    Task<List<LocationDto>> GetAllInGivenAreaAsync(PolygonDto areaPolygon);
     Task<List<LocationDto>> GetAllAsync();
     Task<LocationDto> GetByIdAsync(Guid id);
     Task<Guid> CreateAsync(CreateLocationDto createLocationDto);
@@ -18,6 +19,7 @@ public interface ILocationService
     Task<List<LocationDto>> GetAllPendingAsync();
     Task DeclineAsync(Guid id);
     Task ApproveAsync(Guid id);
+    Task<List<LocationDto>> GetAllByProvidedFilterAsync(LocationFilterDto filterDto);
 }
 
 public class LocationService : ILocationService
@@ -33,7 +35,24 @@ public class LocationService : ILocationService
         _mapper = mapper;
     }
 
-    public async Task<List<LocationDto>> GetAllInGivenArea(PolygonDto areaPolygon)
+    public async Task<List<LocationDto>> GetAllByProvidedFilterAsync(LocationFilterDto filterDto)
+    {
+         Expression<Func<LocationEntity, bool>> condition = location =>
+                (string.IsNullOrEmpty(filterDto.Term) ||
+                location.Name.Contains(filterDto.Term) ||
+                location.Description.Contains(filterDto.Term)
+                )
+                && (filterDto.CategoryId == null || location.CategoryId == filterDto.CategoryId);
+
+        var locations = await _locationRepository.GetByConditionAsync(condition);
+
+        return locations
+            .Select(location => _mapper.Map<LocationDto>(location))
+            .ToList();
+
+    }
+
+    public async Task<List<LocationDto>> GetAllInGivenAreaAsync(PolygonDto areaPolygon)
     {
         var locations = await _locationRepository.GetAllAsync();
 

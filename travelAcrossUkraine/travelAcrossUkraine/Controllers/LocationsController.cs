@@ -22,11 +22,24 @@ public class LocationsController : ControllerBase
     }
 
     [HttpPost("inGivenArea")]
-    public async Task<ActionResult<List<LocationDto>>> GetAllInGivenArea(PolygonDto areaPolygon)
+    public async Task<ActionResult<List<LocationDto>>> GetAllInGivenAreaAsync(PolygonDto areaPolygon)
     {
         try
         {
-            return await _locationService.GetAllInGivenArea(areaPolygon);
+            return await _locationService.GetAllInGivenAreaAsync(areaPolygon);
+        }
+        catch (Exception ex)
+        {
+            return ExceptionHandler.Handle(ex, _logger);
+        }
+    }
+
+    [HttpPost("byFilter")]
+    public async Task<ActionResult<List<LocationDto>>> GetAllByProvidedFilterAsync(LocationFilterDto filter)
+    {
+        try
+        {
+            return await _locationService.GetAllByProvidedFilterAsync(filter);
         }
         catch (Exception ex)
         {
@@ -75,7 +88,7 @@ public class LocationsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<Guid>> CreateAsync([FromForm] CreateLocationDto location)
+    public async Task<ActionResult<Guid>> CreateAsync([FromBody] CreateLocationDto location)
     {
         try
         {

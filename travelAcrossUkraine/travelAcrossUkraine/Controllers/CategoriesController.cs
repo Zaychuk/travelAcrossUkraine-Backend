@@ -64,6 +64,22 @@ public class CategoriesController : ControllerBase
         }
     }
 
+    [HttpPut("{id}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<Guid>> UpdateAsync(Guid id, CreateCategoryDto category)
+    {
+        try
+        {
+
+            return await _categoryService.UpdateAsync(id, category);
+
+        }
+        catch (Exception ex)
+        {
+            return ExceptionHandler.Handle(ex, _logger);
+        }
+    }
+
     [HttpDelete("{id}")]
     [Authorize(Roles = "Admin")]
     public async Task<ActionResult> DeleteAsync(Guid id)

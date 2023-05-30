@@ -48,15 +48,35 @@ public static class AreaHelper
         {
             for (int j = 0; j < polygon2.GeoPoints.Count - 1; j++)
             {
-                if(IsIntersect(new LineDto(polygon1.GeoPoints[i], polygon1.GeoPoints[i + 1]), new LineDto(polygon2.GeoPoints[j], polygon2.GeoPoints[j + 1])))
+                if (IsIntersect(new LineDto(polygon1.GeoPoints[i], polygon1.GeoPoints[i + 1]), new LineDto(polygon2.GeoPoints[j], polygon2.GeoPoints[j + 1])))
                 {
                     result = true;
                     break;
                 }
             }
-            if(result)
+            if (result)
             {
                 break;
+            }
+        }
+
+        if (!result)
+        {
+            for (int i = 0; i < polygon1.GeoPoints.Count - 1; i++)
+            {
+                if(CheckIfGeoPointInsidePolygon(polygon2, polygon2.GeoPoints.Count -1, polygon1.GeoPoints.Single(gp => gp.SequenceNumber == i)))
+                {
+                    result = true;
+                    break;
+                }
+            }
+            for (int i = 0; i < polygon2.GeoPoints.Count - 1; i++)
+            {
+                if (CheckIfGeoPointInsidePolygon(polygon1, polygon1.GeoPoints.Count - 1, polygon2.GeoPoints.Single(gp => gp.SequenceNumber == i)))
+                {
+                    result = true;
+                    break;
+                }
             }
         }
 
@@ -65,15 +85,15 @@ public static class AreaHelper
 
     public static bool CheckIfPolygonAndCirleIntersect(PolygonDto polygon, CircleDto cirlce)
     {
-        if (CheckIfGeoPointInsidePolygon(polygon, polygon.GeoPoints.Count, cirlce.CenterGeoPoint))
+        if (CheckIfGeoPointInsidePolygon(polygon, polygon.GeoPoints.Count - 1, cirlce.CenterGeoPoint))
         {
             return true;
         }
         var result = false;
         for (int i = 0; i < polygon.GeoPoints.Count - 1; i++)
         {
-            var distance = DistanceFromPointToLine(cirlce.CenterGeoPoint, new LineDto(polygon.GeoPoints[i], polygon.GeoPoints[i + 1]));
-            if ((decimal)distance > cirlce.Radius)
+            var distance = DistanceFromPointToLine(cirlce.CenterGeoPoint, new LineDto(polygon.GeoPoints.Single(gp => gp.SequenceNumber == i), polygon.GeoPoints.Single(gp => gp.SequenceNumber == i + 1)));
+            if ((decimal)distance <= cirlce.Radius)
             {
                 result = true;
                 break;
@@ -83,38 +103,29 @@ public static class AreaHelper
         return result;
     }
 
-    //private static GeoPointDto GetClosestPoint(GeoPointDto a, GeoPointDto b, GeoPointDto p)
-    //{
-    //    var vectorAP = (p.CoordinateX - a.CoordinateX, p.CoordinateY - a.CoordinateY);     //Vector from A to P
-    //    var vectorAB = (b.CoordinateX - a.CoordinateX, b.CoordinateY - a.CoordinateY);     //Vector from A to B
+    public static bool CheckIfTwoCirlesIntersect(CircleDto circle1, CircleDto circle2)
+    {
+        var distanceBetweenTwoCenters = DistanceBetweenPoints(circle1.CenterGeoPoint, circle2.CenterGeoPoint);
 
-    //    var magnitudeAB = vectorAB.Item1 * vectorAB.Item1 + vectorAB.Item2 * vectorAB.Item2;
-    //    //Magnitude of AB vector (it's length)
+        return distanceBetweenTwoCenters <= circle1.Radius + circle2.Radius;
+    }
 
+    public static bool CheckIsPointInsideCircle(GeoPointDto point, CircleDto circle)
+    {
+        var distance = DistanceBetweenPoints(point, circle.CenterGeoPoint);
 
-    //    var ABAPproduct = vectorAB.Item1 * vectorAP.Item1 + vectorAB.Item2 * vectorAP.Item2;
-    //    //The product of a_to_p and a_to_b
+        return distance <= circle.Radius;
+    }
 
+    private static decimal DistanceBetweenPoints(GeoPointDto point1, GeoPointDto point2)
+    {
+        return (decimal)Math.Sqrt(
+            Math.Pow(decimal.ToDouble(point2.CoordinateX) - decimal.ToDouble(point1.CoordinateX), 2)
+            +
+            Math.Pow(decimal.ToDouble(point2.CoordinateY) - decimal.ToDouble(point1.CoordinateY), 2));
+    }
 
-    //    var distance = ABAPproduct / magnitudeAB;
-    //    //The normalized "distance" from a to your closest point
-
-    //    if (distance < 0)     //Check if P projection is over vectorAB
-    //    {
-    //        return new GeoPointDto(a.CoordinateX, a.CoordinateY);
-    //    }
-    //    else if (distance > magnitudeAB)
-    //    {
-    //        return new GeoPointDto(b.CoordinateX, b.CoordinateY);
-    //    }
-    //    else
-    //    {
-    //        return new GeoPointDto(a.CoordinateX + vectorAB.Item1 * distance, a.CoordinateY + vectorAB.Item2 * distance);
-    //    }
-
-    //}
-
-    public static double DistanceFromPointToLine(GeoPointDto point, LineDto line)
+    private static double DistanceFromPointToLine(GeoPointDto point, LineDto line)
     {
         GeoPointDto l1 = line.FirstPoint;
         GeoPointDto l2 = line.SecondPoint;

@@ -11,7 +11,7 @@ namespace TravelAcrossUkraine.WebApi.Services;
 
 public interface ILocationService
 {
-    Task<List<LocationDto>> GetAllInGivenAreaAsync(PolygonDto areaPolygon);
+    Task<List<LocationDto>> GetAllInGivenAreaAsync(CreatePolygonDto areaPolygon);
     Task<List<LocationDto>> GetAllAsync();
     Task<LocationDto> GetByIdAsync(Guid id);
     Task<Guid> CreateAsync(CreateLocationDto createLocationDto);
@@ -55,40 +55,48 @@ public class LocationService : ILocationService
 
     }
 
-    public async Task<List<LocationDto>> GetAllInGivenAreaAsync(PolygonDto areaPolygon)
+    public async Task<List<LocationDto>> GetAllInGivenAreaAsync(CreatePolygonDto areaPolygon)
     {
         var locations = await _locationRepository.GetAllAsync();
 
         var locationDtos = locations
-            .Where(location => location.GeoPoint != null)
             .Select(location => _mapper.Map<LocationDto>(location))
             .ToList();
+        var polygonDto = new PolygonDto
+        {
+            GeoPoints = areaPolygon.GeoPoints.Select((gp, index) => new GeoPointDto { CoordinateX = gp.CoordinateX, CoordinateY = gp.CoordinateY, SequenceNumber = index }).ToList(),
+        };
+        var locationDtosToRemove = new List<LocationDto>();
 
         locationDtos.ForEach(location =>
         {
             if (location.GeoPoint != null)
             {
-                if (!AreaHelper.CheckIfGeoPointInsidePolygon(areaPolygon, areaPolygon.GeoPoints.Count, location.GeoPoint))
+                if (!AreaHelper.CheckIfGeoPointInsidePolygon(polygonDto, polygonDto.GeoPoints.Count - 1, location.GeoPoint))
                 {
-                    locationDtos.Remove(location);
+                    locationDtosToRemove.Add(location);
                 }
             }
-            if (location.Circle != null)
+            else if (location.Circle != null)
             {
-                if (!AreaHelper.CheckIfPolygonAndCirleIntersect(areaPolygon, location.Circle))
+                if (!AreaHelper.CheckIfPolygonAndCirleIntersect(polygonDto, location.Circle))
                 {
-                    locationDtos.Remove(location);
+                    locationDtosToRemove.Add(location);
                 }
             }
-            if (location.Polygon != null)
+            else if (location.Polygon != null)
             {
-                if (!AreaHelper.CheckIfPolygonsIntersect(areaPolygon, location.Polygon))
+                if (!AreaHelper.CheckIfPolygonsIntersect(polygonDto, location.Polygon))
                 {
-                    locationDtos.Remove(location);
+                    locationDtosToRemove.Add(location);
                 }
+            }
+            else
+            {
+                locationDtosToRemove.Add(location);
             }
         });
-
+        locationDtos.RemoveAll(l => locationDtosToRemove.Contains(l));
         return locationDtos;
     }
 
@@ -169,8 +177,87 @@ public class LocationService : ILocationService
     public async Task<LocationDto> GetByIdAsync(Guid id)
     {
         var locationEntity = await _locationRepository.GetByIdAsync(id) ?? throw new NotFoundException($"Location {id} was not found");
+        var allEcologicalProblems = await _locationRepository.GetAllEcologicalProblemsAsync();
+
+        var allEcologicalProblemDtos = allEcologicalProblems.Select(ep => _mapper.Map<LocationDto>(ep)).ToList();
 
         var locationDto = _mapper.Map<LocationDto>(locationEntity);
+
+
+        allEcologicalProblemDtos.ForEach(ecologicalProblem =>
+        {
+            if (ecologicalProblem.GeoPoint != null)
+            {
+                if (locationDto.Circle != null)
+                {
+                    if (AreaHelper.CheckIsPointInsideCircle(ecologicalProblem.GeoPoint, locationDto.Circle))
+                    {
+                        locationDto.EcologicalProblems.Add(ecologicalProblem.Category.Name);
+                    }
+                }
+                else if (locationDto.Polygon != null)
+                {
+
+                    if (AreaHelper.CheckIfGeoPointInsidePolygon(locationDto.Polygon, locationDto.Polygon.GeoPoints.Count - 1, ecologicalProblem.GeoPoint))
+                    {
+                        locationDto.EcologicalProblems.Add(ecologicalProblem.Category.Name);
+                    }
+                }
+
+            }
+            else if (ecologicalProblem.Circle != null)
+            {
+                if (locationDto.GeoPoint != null)
+                {
+                    if (AreaHelper.CheckIsPointInsideCircle(locationDto.GeoPoint, ecologicalProblem.Circle))
+                    {
+                        locationDto.EcologicalProblems.Add(ecologicalProblem.Category.Name);
+                    }
+                }
+                else if (locationDto.Circle != null)
+                {
+                    if (AreaHelper.CheckIfTwoCirlesIntersect(ecologicalProblem.Circle, locationDto.Circle))
+                    {
+                        locationDto.EcologicalProblems.Add(ecologicalProblem.Category.Name);
+                    }
+                }
+                else if (locationDto.Polygon != null)
+                {
+
+                    if (AreaHelper.CheckIfPolygonAndCirleIntersect(locationDto.Polygon, ecologicalProblem.Circle))
+                    {
+                        locationDto.EcologicalProblems.Add(ecologicalProblem.Category.Name);
+                    }
+                }
+            }
+            else if (ecologicalProblem.Polygon != null)
+            {
+                if (locationDto.GeoPoint != null)
+                {
+                    if (AreaHelper.CheckIfGeoPointInsidePolygon(ecologicalProblem.Polygon, ecologicalProblem.Polygon.GeoPoints.Count - 1, locationDto.GeoPoint))
+                    {
+                        locationDto.EcologicalProblems.Add(ecologicalProblem.Category.Name);
+                    }
+                }
+                else if (locationDto.Circle != null)
+                {
+                    if (AreaHelper.CheckIfPolygonAndCirleIntersect(ecologicalProblem.Polygon, locationDto.Circle))
+                    {
+                        locationDto.EcologicalProblems.Add(ecologicalProblem.Category.Name);
+                    }
+                }
+                else if (locationDto.Polygon != null)
+                {
+
+                    if (AreaHelper.CheckIfPolygonsIntersect(locationDto.Polygon, ecologicalProblem.Polygon))
+                    {
+                        locationDto.EcologicalProblems.Add(ecologicalProblem.Category.Name);
+                    }
+                }
+            }
+        });
+
+        locationDto.EcologicalProblems = locationDto.EcologicalProblems.Distinct().ToList();
 
         return locationDto;
     }

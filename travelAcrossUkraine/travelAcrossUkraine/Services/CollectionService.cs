@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using System.Security.Claims;
 using TravelAcrossUkraine.WebApi.Dtos;
 using TravelAcrossUkraine.WebApi.Entities;
 using TravelAcrossUkraine.WebApi.Exceptions;
@@ -10,7 +9,7 @@ namespace TravelAcrossUkraine.WebApi.Services;
 
 public interface ICollectionService
 {
-    Task AddLocationToCollectionAsync(Guid collectionId, Guid locationId);
+    Task AddLocationToCollectionsAsync(Guid collectionId, Guid locationId);
     Task<Guid> CreateAsync(CreateCollectionDto categoryDto);
     Task<Guid> DeleteAsync(Guid id);
     Task<List<CollectionDto>> GetListAsync();
@@ -42,25 +41,27 @@ public class CollectionService : ICollectionService
             .Select(collection => _mapper.Map<CollectionDto>(collection))
             .ToList();
     }
-    public async Task AddLocationToCollectionAsync(Guid collectionId, Guid locationId)
+    public async Task AddLocationToCollectionsAsync(Guid collectionId, Guid locationId)
     {
-        var authenticatedUser = AuthenticatedUserHelper.GetAuthenticatedUser( _httpContextAccessor?.HttpContext?.User?.Identity);
-
-        var user = await _userRepository.GetAsync(authenticatedUser.Username);
-
-        if (user == null || !user.Collections.Any(c => c.Id == collectionId))
+        if (!await _collectionRepository.CollectionLocationExistsAsync(collectionId, locationId))
         {
-            throw new ForbiddenException("User doesn`t have an access to modify this collection");
+            var authenticatedUser = AuthenticatedUserHelper.GetAuthenticatedUser(_httpContextAccessor?.HttpContext?.User?.Identity);
+
+            var user = await _userRepository.GetAsync(authenticatedUser.Username);
+
+            if (user == null || !user.Collections.Any(c => collectionId == c.Id))
+            {
+                throw new ForbiddenException("User doesn`t have an access to modify this collection");
+            }
+            var collectionLocation = new CollectionLocationEntity
+            {
+                LocationId = locationId,
+                CollectionId = collectionId
+            };
+            BaseEntityHelper.SetBaseProperties(collectionLocation);
+
+            await _collectionRepository.AddLocationToCollectionsAsync(collectionLocation);
         }
-
-        var collectionLocation = new CollectionLocationEntity
-        {
-            LocationId = locationId,
-            CollectionId = collectionId
-        };
-        BaseEntityHelper.SetBaseProperties(collectionLocation);
-
-        await _collectionRepository.AddLocationToCollectionAsync(collectionLocation);
     }
 
     public async Task<Guid> CreateAsync(CreateCollectionDto categoryDto)

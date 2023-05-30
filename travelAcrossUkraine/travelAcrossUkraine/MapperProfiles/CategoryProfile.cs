@@ -19,7 +19,6 @@ public class CategoryProfile : Profile
             ;
 
         CreateMap<CategoryEntity, CategoryDto>()
-            .ForMember(ent => ent.Type, opt => opt.Ignore())
             ;
 
         CreateMap<CategoryEntity, CategoryWithoutTypeDto>();

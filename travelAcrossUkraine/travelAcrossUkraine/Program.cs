@@ -65,6 +65,7 @@ services.AddScoped<ICategoryService, CategoryService>();
 services.AddScoped<ILocationService, LocationService>();
 services.AddScoped<IAuthService, AuthService>();
 services.AddScoped<IUserService, UserService>();
+services.AddScoped<ICollectionService, CollectionService>();
 
 // Repositories
 services.AddScoped<IGeoPointRepository, GeoPointRepository>();
@@ -79,6 +80,7 @@ services.AddScoped<ICollectionRepository, CollectionRepository>();
 services.AddScoped<IImageRepository, ImageRepository>();
 
 
+services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 var app = builder.Build();
 

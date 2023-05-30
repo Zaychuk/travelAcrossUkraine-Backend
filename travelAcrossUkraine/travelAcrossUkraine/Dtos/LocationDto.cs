@@ -15,4 +15,5 @@ public class LocationDto
     public PolygonDto? Polygon { get; set; }
     public CircleDto? Circle { get; set; }
     public List<string> ImageUrls { get; set; }
+    public List<string> EcologicalProblems { get; set; } = new List<string>();
 }

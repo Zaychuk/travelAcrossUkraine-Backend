@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Rewrite;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using TravelAcrossUkraine.WebApi.Context;
 using TravelAcrossUkraine.WebApi.Entities;
 using TravelAcrossUkraine.WebApi.Utility.Enums;
@@ -8,7 +7,8 @@ namespace TravelAcrossUkraine.WebApi.Repositories;
 
 public interface ICollectionRepository
 {
-    Task AddLocationToCollectionAsync(CollectionLocationEntity collectionLocation);
+    Task AddLocationToCollectionsAsync(CollectionLocationEntity collectionLocation);
+    Task<bool> CollectionLocationExistsAsync(Guid collectionId, Guid locationId);
     Task CreateAsync(CollectionEntity collectionLocation);
     Task DeleteAsync(CollectionEntity collectionLocation);
     Task<CollectionEntity> GetByIdAsync(Guid id);
@@ -40,11 +40,16 @@ public class CollectionRepository : ICollectionRepository
             .FirstOrDefaultAsync(collection => collection.Id == id);
     }
 
-    public async Task AddLocationToCollectionAsync(CollectionLocationEntity collectionLocation)
+    public async Task AddLocationToCollectionsAsync(CollectionLocationEntity collectionLocation)
     {
         _context.CollectionLocation.Add(collectionLocation);
 
         await _context.SaveChangesAsync();
+    }
+
+    public async Task<bool> CollectionLocationExistsAsync(Guid collectionId, Guid locationId)
+    {
+        return await _context.CollectionLocation.AnyAsync(cl => cl.CollectionId == collectionId && cl.LocationId == locationId);
     }
 
     public async Task CreateAsync(CollectionEntity collectionLocation)

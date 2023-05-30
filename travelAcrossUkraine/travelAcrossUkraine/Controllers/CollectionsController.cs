@@ -33,12 +33,12 @@ public class CollectionsController : ControllerBase
         }
     }
 
-    [HttpPost("addlocation")]
+    [HttpGet("addlocation")]
     public async Task<ActionResult> AddLocationToCollectionAsync(Guid collectionId, Guid locationId)
     {
         try
         {
-            await _collectionService.AddLocationToCollectionAsync(collectionId, locationId);
+            await _collectionService.AddLocationToCollectionsAsync(collectionId, locationId);
             return NoContent();
         }
         catch (Exception ex)

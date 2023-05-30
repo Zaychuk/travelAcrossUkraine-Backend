@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TravelAcrossUkraine.WebApi.Dtos;
-using TravelAcrossUkraine.WebApi.Helpers;
 using TravelAcrossUkraine.WebApi.Services;
 using TravelAcrossUkraine.WebApi.Utility;
 using TravelAcrossUkraine.WebApi.Utility.Validators;
@@ -23,11 +22,11 @@ public class LocationsController : ControllerBase
     }
 
     [HttpPost("inGivenArea")]
-    public async Task<ActionResult<List<LocationDto>>> GetAllInGivenAreaAsync(PolygonDto areaPolygon)
+    public async Task<ActionResult<List<LocationDto>>> GetAllInGivenAreaAsync([FromBody] CreatePolygonDto polygon)
     {
         try
         {
-            return await _locationService.GetAllInGivenAreaAsync(areaPolygon);
+            return await _locationService.GetAllInGivenAreaAsync(polygon);
         }
         catch (Exception ex)
         {

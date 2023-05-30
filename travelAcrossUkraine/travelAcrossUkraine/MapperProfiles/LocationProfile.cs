@@ -10,6 +10,7 @@ public class LocationProfile : Profile
     {
         CreateMap<LocationEntity, LocationDto>()
             .ForMember(ent => ent.ImageUrls, opt => opt.MapFrom(ent => ent.Images.Select(i => i.Url)))
+            .ForMember(ent => ent.EcologicalProblems, opt => opt.Ignore())
             ;
 
         CreateMap<CreateLocationDto, LocationEntity>()

@@ -15,6 +15,7 @@ public interface ILocationRepository
     Task<List<LocationEntity>> GetAllPendingAsync();
     Task UpdateAsync(LocationEntity location);
     Task<List<LocationEntity>> GetByConditionAsync(Expression<Func<LocationEntity, bool>> condition);
+    Task<List<LocationEntity>> GetAllEcologicalProblemsAsync();
 }
 
 public class LocationRepository : ILocationRepository
@@ -65,6 +66,17 @@ public class LocationRepository : ILocationRepository
             .Where(location => location.Status == LocationStatuses.Pending)
             .Include(location => location.Images)
             .Include(location => location.Category).ThenInclude(category => category.Type)
+            .Include(location => location.GeoPoint)
+            .Include(location => location.Polygon).ThenInclude(polygon => polygon.GeoPoints)
+            .Include(location => location.Circle).ThenInclude(circle => circle.CenterGeoPoint)
+            .ToListAsync();
+    }
+
+    public async Task<List<LocationEntity>> GetAllEcologicalProblemsAsync()
+    {
+        return await _context.Locations
+            .Where(location => location.Status == LocationStatuses.Approved && location.Category.Type.Name == "Екологічна проблема")
+            .Include(location => location.Category)
             .Include(location => location.GeoPoint)
             .Include(location => location.Polygon).ThenInclude(polygon => polygon.GeoPoints)
             .Include(location => location.Circle).ThenInclude(circle => circle.CenterGeoPoint)

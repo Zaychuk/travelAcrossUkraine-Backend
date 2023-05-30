@@ -8,7 +8,9 @@ public class LocationProfile : Profile
 {
     public LocationProfile()
     {
-        CreateMap<LocationEntity, LocationDto>();
+        CreateMap<LocationEntity, LocationDto>()
+            .ForMember(ent => ent.ImageUrls, opt => opt.MapFrom(ent => ent.Images.Select(i => i.Url)))
+            ;
 
         CreateMap<CreateLocationDto, LocationEntity>()
             .ForMember(ent => ent.Status, opt => opt.Ignore())

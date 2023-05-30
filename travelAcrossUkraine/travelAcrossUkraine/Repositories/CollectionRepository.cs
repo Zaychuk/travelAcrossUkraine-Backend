@@ -30,7 +30,7 @@ public class CollectionRepository : ICollectionRepository
         return await _context.Collections
             .Where(collection => collection.UserId == userId)
             .Include(collection => collection.CollectionLocations.Where(collectionLocation => collectionLocation.Location.Status == LocationStatuses.Approved))
-            .ThenInclude(collectionLocation => collectionLocation.Location)
+            .ThenInclude(collectionLocation => collectionLocation.Location).ThenInclude(l => l.Images)
             .ToListAsync();
     }
 

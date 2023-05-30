@@ -21,7 +21,6 @@ public class CollectionsController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<List<CollectionDto>>> GetListAsync()
     {
         try

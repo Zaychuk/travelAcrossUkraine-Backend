@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TravelAcrossUkraine.WebApi.Dtos;
+using TravelAcrossUkraine.WebApi.Helpers;
 using TravelAcrossUkraine.WebApi.Services;
 using TravelAcrossUkraine.WebApi.Utility;
 using TravelAcrossUkraine.WebApi.Utility.Validators;
@@ -93,7 +94,6 @@ public class LocationsController : ControllerBase
         try
         {
             Validators.ValidateCreateLocationDto(location);
-
             return await _locationService.CreateAsync(location);
         }
         catch (Exception ex)

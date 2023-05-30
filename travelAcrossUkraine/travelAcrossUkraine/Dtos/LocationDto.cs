@@ -14,5 +14,5 @@ public class LocationDto
     public GeoPointDto? GeoPoint { get; set; }
     public PolygonDto? Polygon { get; set; }
     public CircleDto? Circle { get; set; }
-    public List<ImageWithoutLocationDto> Images { get; set; }
+    public List<string> ImageUrls { get; set; }
 }

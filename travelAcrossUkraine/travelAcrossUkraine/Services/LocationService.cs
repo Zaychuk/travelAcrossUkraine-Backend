@@ -26,23 +26,26 @@ public class LocationService : ILocationService
 {
     private readonly ILocationRepository _locationRepository;
     private readonly IImageRepository _imageRepository;
+    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IMapper _mapper;
 
-    public LocationService(ILocationRepository locationRepository, IImageRepository imageRepository, IMapper mapper)
+    public LocationService(ILocationRepository locationRepository, IImageRepository imageRepository,
+        IHttpContextAccessor httpContextAccessor, IMapper mapper)
     {
         _locationRepository = locationRepository;
         _imageRepository = imageRepository;
+        _httpContextAccessor = httpContextAccessor;
         _mapper = mapper;
     }
 
     public async Task<List<LocationDto>> GetAllByProvidedFilterAsync(LocationFilterDto filterDto)
     {
-         Expression<Func<LocationEntity, bool>> condition = location =>
-                (string.IsNullOrEmpty(filterDto.Term) ||
-                location.Name.Contains(filterDto.Term) ||
-                location.Description.Contains(filterDto.Term)
-                )
-                && (filterDto.CategoryId == null || location.CategoryId == filterDto.CategoryId);
+        Expression<Func<LocationEntity, bool>> condition = location =>
+               (string.IsNullOrEmpty(filterDto.Term) ||
+               location.Name.Contains(filterDto.Term) ||
+               location.Description.Contains(filterDto.Term)
+               )
+               && (filterDto.CategoryId == null || location.CategoryId == filterDto.CategoryId);
 
         var locations = await _locationRepository.GetByConditionAsync(condition);
 
@@ -93,6 +96,12 @@ public class LocationService : ILocationService
     {
         var location = _mapper.Map<LocationEntity>(createLocationDto);
         BaseEntityHelper.SetBaseProperties(location);
+        var user = AuthenticatedUserHelper.GetAuthenticatedUser(_httpContextAccessor.HttpContext.User.Identity);
+
+        if (user.Role == "Admin")
+        {
+            location.Status = LocationStatuses.Approved;
+        }
 
         var images = createLocationDto.ImageUrls.Select(imageUrl =>
         {

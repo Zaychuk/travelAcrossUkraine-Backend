@@ -7,13 +7,15 @@ namespace TravelAcrossUkraine.WebApi.Repositories;
 
 public interface ICollectionRepository
 {
-    Task AddLocationToCollectionsAsync(CollectionLocationEntity collectionLocation);
+    Task AddLocationToCollectionsAsync(List<CollectionLocationEntity> collectionLocations);
+    Task<List<CollectionLocationEntity>> GetCollectionLocationsByLocationIdAsync(Guid locationId);
     Task<bool> CollectionLocationExistsAsync(Guid collectionId, Guid locationId);
     Task CreateAsync(CollectionEntity collectionLocation);
     Task DeleteAsync(CollectionEntity collectionLocation);
     Task<CollectionEntity> GetByIdAsync(Guid id);
     Task<List<CollectionEntity>> GetListAsync(Guid userId);
     Task UpdateAsync(CollectionEntity collectionLocation);
+    Task RemoveCollectionLocationsAsync(List<CollectionLocationEntity> collectionLocations);
 }
 
 public class CollectionRepository : ICollectionRepository
@@ -40,9 +42,16 @@ public class CollectionRepository : ICollectionRepository
             .FirstOrDefaultAsync(collection => collection.Id == id);
     }
 
-    public async Task AddLocationToCollectionsAsync(CollectionLocationEntity collectionLocation)
+    public async Task AddLocationToCollectionsAsync(List<CollectionLocationEntity> collectionLocations)
     {
-        _context.CollectionLocation.Add(collectionLocation);
+        _context.CollectionLocation.AddRange(collectionLocations);
+
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task RemoveCollectionLocationsAsync(List<CollectionLocationEntity> collectionLocations)
+    {
+        _context.CollectionLocation.RemoveRange(collectionLocations);
 
         await _context.SaveChangesAsync();
     }
@@ -71,5 +80,11 @@ public class CollectionRepository : ICollectionRepository
         _context.Collections.Remove(collectionLocation);
 
         await _context.SaveChangesAsync();
+    }
+
+    public async Task<List<CollectionLocationEntity>> GetCollectionLocationsByLocationIdAsync(Guid locationId)
+    {
+        return await _context.CollectionLocation.Where(cl => cl.LocationId == locationId)
+            .ToListAsync();
     }
 }

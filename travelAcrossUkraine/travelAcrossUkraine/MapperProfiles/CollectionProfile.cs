@@ -10,6 +10,7 @@ public class CollectionProfile : Profile
     {
         CreateMap<CollectionEntity, CollectionDto>()
             .ForMember(dto => dto.Locations, opt => opt.MapFrom(ent => ent.CollectionLocations.Select(cl => cl.Location).ToList()));
+        CreateMap<CollectionEntity, CollectionWithoutLocationDto>();
 
         CreateMap<CreateCollectionDto, CollectionEntity>()
             .ForMember(ent => ent.Id, opt => opt.Ignore())

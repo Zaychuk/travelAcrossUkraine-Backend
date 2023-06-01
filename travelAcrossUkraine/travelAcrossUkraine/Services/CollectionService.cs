@@ -9,7 +9,7 @@ namespace TravelAcrossUkraine.WebApi.Services;
 
 public interface ICollectionService
 {
-    Task AddLocationToCollectionsAsync(Guid collectionId, Guid locationId);
+    Task AddLocationToCollectionsAsync(List<Guid> collectionIds, Guid locationId);
     Task<Guid> CreateAsync(CreateCollectionDto categoryDto);
     Task<Guid> DeleteAsync(Guid id);
     Task<List<CollectionDto>> GetListAsync();
@@ -41,18 +41,23 @@ public class CollectionService : ICollectionService
             .Select(collection => _mapper.Map<CollectionDto>(collection))
             .ToList();
     }
-    public async Task AddLocationToCollectionsAsync(Guid collectionId, Guid locationId)
+    public async Task AddLocationToCollectionsAsync(List<Guid> collectionIds, Guid locationId)
     {
-        if (!await _collectionRepository.CollectionLocationExistsAsync(collectionId, locationId))
+
+        var authenticatedUser = AuthenticatedUserHelper.GetAuthenticatedUser(_httpContextAccessor?.HttpContext?.User?.Identity);
+
+        var user = await _userRepository.GetAsync(authenticatedUser.Username);
+        var userCollectionIds = user.Collections.Select(c => c.Id).ToList();
+
+        if (user == null || collectionIds.Any(c => !userCollectionIds.Contains(c)))
         {
-            var authenticatedUser = AuthenticatedUserHelper.GetAuthenticatedUser(_httpContextAccessor?.HttpContext?.User?.Identity);
+            throw new ForbiddenException("User doesn`t have an access to modify this collection");
+        }
+        var existedCollectionLocations = await _collectionRepository.GetCollectionLocationsByLocationIdAsync(locationId);
+        var existedCollectionLocationsCollections = existedCollectionLocations.Select(cl => cl.CollectionId).ToList();
 
-            var user = await _userRepository.GetAsync(authenticatedUser.Username);
-
-            if (user == null || !user.Collections.Any(c => collectionId == c.Id))
-            {
-                throw new ForbiddenException("User doesn`t have an access to modify this collection");
-            }
+        var collectionLocationsToCreate = collectionIds.Where(c => !existedCollectionLocationsCollections.Contains(c)).Select(collectionId =>
+        {
             var collectionLocation = new CollectionLocationEntity
             {
                 LocationId = locationId,
@@ -60,7 +65,24 @@ public class CollectionService : ICollectionService
             };
             BaseEntityHelper.SetBaseProperties(collectionLocation);
 
-            await _collectionRepository.AddLocationToCollectionsAsync(collectionLocation);
+            return collectionLocation;
+        }).ToList();
+
+        var collectionLocationsToDelete = existedCollectionLocationsCollections.Where(c => !collectionIds.Contains(c)).Select(c =>
+        {
+            var collectionToDelete = existedCollectionLocations.Single(exl => exl.Collection.Id == c);
+            collectionToDelete.IsDeleted = true;
+            BaseEntityHelper.UpdateBaseProperties(collectionToDelete);
+            return collectionToDelete;
+        }).ToList();
+
+        if (collectionLocationsToCreate.Any())
+        {
+            await _collectionRepository.AddLocationToCollectionsAsync(collectionLocationsToCreate);
+        }
+        if (collectionLocationsToDelete.Any())
+        {
+            await _collectionRepository.RemoveCollectionLocationsAsync(collectionLocationsToDelete);
         }
     }
 

@@ -92,6 +92,7 @@ public class LocationRepository : ILocationRepository
             .Include(location => location.GeoPoint)
             .Include(location => location.Polygon).ThenInclude(polygon => polygon.GeoPoints)
             .Include(location => location.Circle).ThenInclude(circle => circle.CenterGeoPoint)
+            .Include(location => location.CollectionLocations).ThenInclude(cl => cl.Collection)
             .FirstOrDefaultAsync();
     }
 

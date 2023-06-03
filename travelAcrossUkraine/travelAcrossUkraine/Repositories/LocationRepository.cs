@@ -16,6 +16,7 @@ public interface ILocationRepository
     Task UpdateAsync(LocationEntity location);
     Task<List<LocationEntity>> GetByConditionAsync(Expression<Func<LocationEntity, bool>> condition);
     Task<List<LocationEntity>> GetAllEcologicalProblemsAsync();
+    Task<LocationEntity> GetByIdWithCollectionsAsync(Guid id, Guid userId);
 }
 
 public class LocationRepository : ILocationRepository
@@ -93,6 +94,19 @@ public class LocationRepository : ILocationRepository
             .Include(location => location.Polygon).ThenInclude(polygon => polygon.GeoPoints)
             .Include(location => location.Circle).ThenInclude(circle => circle.CenterGeoPoint)
             .Include(location => location.CollectionLocations).ThenInclude(cl => cl.Collection)
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task<LocationEntity> GetByIdWithCollectionsAsync(Guid id, Guid userId)
+    {
+        return await _context.Locations
+            .Where(polygon => polygon.Id.Equals(id))
+            .Include(location => location.Images)
+            .Include(location => location.Category).ThenInclude(category => category.Type)
+            .Include(location => location.GeoPoint)
+            .Include(location => location.Polygon).ThenInclude(polygon => polygon.GeoPoints)
+            .Include(location => location.Circle).ThenInclude(circle => circle.CenterGeoPoint)
+            .Include(location => location.CollectionLocations.Where(cl => cl.Collection.UserId == userId)).ThenInclude(cl => cl.Collection)
             .FirstOrDefaultAsync();
     }
 

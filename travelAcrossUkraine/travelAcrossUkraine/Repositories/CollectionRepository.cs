@@ -85,6 +85,7 @@ public class CollectionRepository : ICollectionRepository
     public async Task<List<CollectionLocationEntity>> GetCollectionLocationsByLocationIdAsync(Guid locationId)
     {
         return await _context.CollectionLocation.Where(cl => cl.LocationId == locationId)
+            .Include(cl => cl.Collection)
             .ToListAsync();
     }
 }

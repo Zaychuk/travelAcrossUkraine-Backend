@@ -176,7 +176,8 @@ public class LocationService : ILocationService
 
     public async Task<LocationDto> GetByIdAsync(Guid id)
     {
-        var locationEntity = await _locationRepository.GetByIdAsync(id) ?? throw new NotFoundException($"Location {id} was not found");
+        var user = AuthenticatedUserHelper.GetAuthenticatedUser(_httpContextAccessor.HttpContext.User.Identity);
+        var locationEntity = await _locationRepository.GetByIdWithCollectionsAsync(id, user.Id) ?? throw new NotFoundException($"Location {id} was not found");
         var allEcologicalProblems = await _locationRepository.GetAllEcologicalProblemsAsync();
 
         var allEcologicalProblemDtos = allEcologicalProblems.Select(ep => _mapper.Map<LocationDto>(ep)).ToList();
